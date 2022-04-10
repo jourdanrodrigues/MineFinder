@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import Cell from 'components/Cell'
 import {range} from 'utils'
 import BombCell from 'components/BombCell'
+import {useBooleanState} from './hooks'
 
 interface CellType {
   isBomb: boolean
@@ -11,7 +12,7 @@ interface CellType {
 type RowType = CellType[]
 type GridType = RowType[]
 
-const COLS = 5
+const COLS = 10
 const ROWS = COLS
 
 const CellRow = styled.div`
@@ -19,6 +20,7 @@ const CellRow = styled.div`
 `
 
 function App() {
+  const [isGameOver, finishTheGame] = useBooleanState(false)
   const grid: GridType = useMemo(() => {
     return range(ROWS).map(() => range(COLS).map(() => {
       const isBomb = Math.floor(Math.random() * 10) % 2 === 0
@@ -30,8 +32,8 @@ function App() {
     <CellRow>
       {row.map((cell, columnIndex) => {
         return cell.isBomb
-          ? <BombCell/>
-          : <Cell bombsAround={countBombsAround(grid, columnIndex, rowIndex)}/>
+          ? <BombCell isGameOver={isGameOver} onClick={finishTheGame}/>
+          : <Cell isGameOver={isGameOver} bombsAround={countBombsAround(grid, columnIndex, rowIndex)}/>
       })}
     </CellRow>
   ))

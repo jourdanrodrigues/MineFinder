@@ -4,6 +4,7 @@ import {useBooleanState} from 'hooks'
 
 interface CellProps {
   bombsAround: number
+  isGameOver: boolean
 }
 
 interface WrapperProps {
@@ -35,9 +36,9 @@ const Wrapper = styled.span<WrapperProps>`
   }
 `
 
-export default function Cell({bombsAround}: CellProps): JSX.Element {
+export default function Cell({bombsAround, isGameOver}: CellProps): JSX.Element {
   const [isRevealed, reveal] = useBooleanState()
   return (
-    <Wrapper isRevealed={isRevealed} bombsAround={bombsAround} onClick={reveal}/>
+    <Wrapper isRevealed={isGameOver || isRevealed} bombsAround={bombsAround} onClick={reveal}/>
   )
 }

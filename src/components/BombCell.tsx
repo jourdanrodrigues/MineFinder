@@ -1,6 +1,12 @@
 import React from 'react'
 import styled from 'styled-components'
 import {useBooleanState} from 'hooks'
+import {chainCall} from 'utils'
+
+interface BombCellProps {
+  onClick: () => void
+  isGameOver: boolean
+}
 
 interface WrapperProps {
   isRevealed: boolean
@@ -32,9 +38,7 @@ const Wrapper = styled.span<WrapperProps>`
   }
 `
 
-export default function BombCell() {
+export default function BombCell({onClick, isGameOver}: BombCellProps) {
   const [isRevealed, reveal] = useBooleanState()
-  return (
-    <Wrapper isRevealed={isRevealed} onClick={reveal}/>
-  )
+  return <Wrapper isRevealed={isGameOver || isRevealed} onClick={chainCall(onClick, reveal)}/>
 }
