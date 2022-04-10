@@ -1,6 +1,7 @@
 import React, {useMemo} from 'react'
 import styled from 'styled-components'
 import Cell from 'components/Cell'
+import {range} from 'utils'
 
 interface CellType {
   isBomb: boolean
@@ -34,7 +35,3 @@ function App() {
 }
 
 export default App;
-
-function range(number: number): number[] {
-  return Array.from(new Array(number).keys())
-}
