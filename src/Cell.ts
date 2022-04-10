@@ -17,20 +17,26 @@ export default class Cell {
     this.bombs = new Set()
   }
 
-  addNeighbor(neighbor: Cell): void {
-    this.neighbors.add(neighbor)
-  }
-
-  addBomb(bomb: Cell): void {
-    this.bombs.add(bomb)
-  }
-
   getBombsCount(): number {
     return this.bombs.size
   }
 
-  getSafeNeighborsIds(): string[] {
-    return Array.from(this.neighbors.values()).map((neighbor) => neighbor.id)
+  hasBombs(): boolean {
+    return this.bombs.size > 0
+  }
+
+  getSafeNeighbors(): Cell[] {
+    return Cell.findSafeNeighbors(this, new Set())
+  }
+
+  private static findSafeNeighbors(cell: Cell, idsCache: Set<string>): Cell[] {
+    if (idsCache.has(cell.id) || cell.isBomb || cell.hasBombs()) return []
+    idsCache.add(cell.id)
+    const neighbors = Array.from(cell.neighbors)
+    return neighbors.reduce(
+      (output, neighbor) => [...output, neighbor, ...this.findSafeNeighbors(neighbor, idsCache)],
+      [] as Cell[]
+    )
   }
 
   fillNeighbors(grid: Grid): void {
@@ -43,9 +49,9 @@ export default class Cell {
         if (columnIndex === row.length) break
         const neighbor = row[columnIndex]
         if (neighbor.isBomb) {
-          this.addBomb(neighbor)
+          this.bombs.add(neighbor)
         } else {
-          this.addNeighbor(neighbor)
+          this.neighbors.add(neighbor)
         }
       }
     }

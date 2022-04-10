@@ -34,11 +34,7 @@ function App() {
   return <div>{rows}</div>
 
   function reveal(cell: Cell): void {
-    if (cell.getBombsCount() !== 0) {
-      revealed.add(cell.id)
-    } else {
-      revealed.addMany([cell.id, ...cell.getSafeNeighborsIds()])
-    }
+    revealed.addMany([cell.id, ...cell.getSafeNeighbors().map(({id}) => id)])
   }
 }
 
