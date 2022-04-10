@@ -8,6 +8,7 @@ import Grid from 'Grid'
 
 const COLS = 10
 const ROWS = COLS
+const MAX_BOMBS = 20
 
 const CellRow = styled.div`
   display: flex;
@@ -15,7 +16,7 @@ const CellRow = styled.div`
 
 function App() {
   const [isGameOver, finishTheGame] = useBooleanState(false)
-  const grid = useMemo(() => new Grid(ROWS, COLS), [])
+  const grid = useMemo(() => new Grid(ROWS, COLS, MAX_BOMBS), [])
   const revealed = useSetstate()
 
   const rows = grid.map((row, i) => (

@@ -4,16 +4,23 @@ import Cell from 'Cell'
 type RowType = Cell[]
 
 export default class Grid extends Array<RowType> {
-  constructor(rows: number, columns: number) {
+  constructor(rows: number, columns: number, bombs: number) {
     super()
 
+    const cells: Cell[] = []
     range(rows).forEach((rowIndex) => {
-      const row: RowType = range(columns).map((columnIndex) => {
+      this.push(range(columns).map((columnIndex) => {
         const cell = new Cell(rowIndex, columnIndex)
-        cell.isBomb = Math.floor(Math.random() * 10) % 4 === 0
+        cells.push(cell)
         return cell
-      })
-      this.push(row)
+      }))
+    })
+
+    const bombOptions = cells.concat()
+    range(bombs).forEach(() => {
+      const i = Math.floor(Math.random() * bombOptions.length)
+      bombOptions[i].isBomb = true
+      bombOptions.splice(i, 1)
     })
 
     this.forEach((row) => {
