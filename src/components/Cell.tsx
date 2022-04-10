@@ -3,53 +3,41 @@ import styled from 'styled-components'
 import {useBooleanState} from 'hooks'
 
 interface CellProps {
-  isBomb: boolean
-  x: number
-  y: number
+  bombsAround: number
 }
 
-interface CellWrapperProps {
-  showBomb: boolean
+interface WrapperProps {
+  bombsAround: number
   isRevealed: boolean
-  exposeNeighbors: boolean
 }
 
-const CellWrapper = styled.span<CellWrapperProps>`
-  display: block;
+const Wrapper = styled.span<WrapperProps>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 3rem;
   height: 3rem;
   border-style: solid;
   border-color: black;
-  cursor: ${(props: CellWrapperProps) => props.isRevealed ? 'initial' : 'pointer'};
-  background-color: ${(props: CellWrapperProps) => props.exposeNeighbors ? 'lightgrey' : 'initial'};
+  cursor: ${(props: WrapperProps) => props.isRevealed ? 'initial' : 'pointer'};
+  background-color: ${(props: WrapperProps) => props.isRevealed ? 'lightgrey' : 'initial'};
   transition: background-color .1s ease-in-out;
-  
+
   &:after {
     display: block;
-    content: '';
-    transform: translate(-50%,-50%);
-    top: 50%;
-    left: 50%;
-    position: relative;
-    width: ${(props: CellWrapperProps) => props.showBomb ? '2rem' : 0};
-    height: ${(props: CellWrapperProps) => props.showBomb ? '2rem' : 0};
-    border-style: ${(props: CellWrapperProps) => props.showBomb ? 'solid' : 'hidden'};
-    border-width: ${(props: CellWrapperProps) => props.showBomb ? 'medium' : 0};
-    border-color: black;
-    border-radius: 50%;
-    transition: all .1s ease-in-out;
-    transition-property: height, width, border-style;
+    content: '${(props: WrapperProps) => props.isRevealed ? props.bombsAround : ''}';
+    text-align: center;
+    line-height: 80%;
+    font-size: ${(props: WrapperProps) => props.isRevealed ? '2rem' : 0};
+    width: 2rem;
+    height: 2rem;
+    transition: font-size .1s ease-in-out;
   }
 `
 
-export default function Cell({isBomb}: CellProps): JSX.Element  {
+export default function Cell({bombsAround}: CellProps): JSX.Element {
   const [isRevealed, reveal] = useBooleanState()
   return (
-    <CellWrapper
-      isRevealed={isRevealed}
-      showBomb={isBomb && isRevealed}
-      exposeNeighbors={!isBomb && isRevealed}
-      onClick={reveal}
-    />
+    <Wrapper isRevealed={isRevealed} bombsAround={bombsAround} onClick={reveal}/>
   )
 }
