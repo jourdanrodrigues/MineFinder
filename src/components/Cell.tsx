@@ -41,7 +41,7 @@ export default function Cell({isRevealed, cell, onClick}: CellProps): JSX.Elemen
   return (
     <Wrapper
       isRevealed={isRevealed}
-      bombsAround={cell.bombsAround}
+      bombsAround={cell.bombs.length}
       onClick={onClick}
     />
   )

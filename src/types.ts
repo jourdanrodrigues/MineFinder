@@ -4,7 +4,7 @@ export interface CellType {
   row: number
   column: number
   neighbors: CellType[]
-  bombsAround: number
+  bombs: CellType[]
 }
 
 export type RowType = CellType[]
