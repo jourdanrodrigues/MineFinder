@@ -1,10 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
-import {useBooleanState} from 'hooks'
+import {CellType} from 'types'
 
 interface CellProps {
-  bombsAround: number
-  isGameOver: boolean
+  cell: CellType
+  isRevealed: boolean
+  onClick: () => void
 }
 
 interface WrapperProps {
@@ -36,9 +37,12 @@ const Wrapper = styled.span<WrapperProps>`
   }
 `
 
-export default function Cell({bombsAround, isGameOver}: CellProps): JSX.Element {
-  const [isRevealed, reveal] = useBooleanState()
+export default function Cell({isRevealed, cell, onClick}: CellProps): JSX.Element {
   return (
-    <Wrapper isRevealed={isGameOver || isRevealed} bombsAround={bombsAround} onClick={reveal}/>
+    <Wrapper
+      isRevealed={isRevealed}
+      bombsAround={cell.bombsAround}
+      onClick={onClick}
+    />
   )
 }

@@ -1,16 +1,10 @@
 import React, {useMemo} from 'react'
 import styled from 'styled-components'
 import Cell from 'components/Cell'
-import {range} from 'utils'
+import {fillCellNeighborsAndBombs, range} from 'utils'
 import BombCell from 'components/BombCell'
-import {useBooleanState} from './hooks'
-
-interface CellType {
-  isBomb: boolean
-}
-
-type RowType = CellType[]
-type GridType = RowType[]
+import {useBooleanState, useSetstate} from 'hooks'
+import {GridType, CellType} from 'types'
 
 const COLS = 10
 const ROWS = COLS
@@ -22,41 +16,47 @@ const CellRow = styled.div`
 
 function App() {
   const [isGameOver, finishTheGame] = useBooleanState(false)
-  const grid: GridType = useMemo(() => {
-    let bombsCount = 0
-    return range(ROWS).map(() => range(COLS).map(() => {
-      const isBomb = bombsCount < MAX_BOMBS ? Math.floor(Math.random() * 10) % 4 === 0 : false
-      if (isBomb) bombsCount += 1
-      return {isBomb}
-    }))
-  }, [])
+  const grid: GridType = useMemo(initializeGrid, [])
+  const revealed = useSetstate()
 
-  const rows = grid.map((row, rowIndex) => (
-    <CellRow>
-      {row.map((cell, columnIndex) => {
-        return cell.isBomb
-          ? <BombCell isGameOver={isGameOver} onClick={finishTheGame}/>
-          : <Cell isGameOver={isGameOver} bombsAround={countBombsAround(grid, columnIndex, rowIndex)}/>
+  const rows = grid.map((row, i) => (
+    <CellRow key={i}>
+      {row.map((cell) => {
+        if (cell.isBomb) {
+          return <BombCell key={cell.id} isRevealed={isGameOver} onClick={finishTheGame}/>
+        }
+        const isRevealed = isGameOver || revealed.data.has(cell.id)
+        return <Cell key={cell.id} isRevealed={isRevealed} cell={cell} onClick={() => reveal(cell)}/>
       })}
     </CellRow>
   ))
 
   return <div>{rows}</div>
+
+  function reveal(cell: CellType): void {
+    if (cell.bombsAround !== 0) {
+      revealed.add(cell.id)
+    } else {
+      revealed.addMany([cell.id, ...cell.neighbors.map((neighbor) => neighbor.id)])
+    }
+  }
 }
 
 export default App
 
-function countBombsAround(grid: GridType, columnIndex: number, rowIndex: number): number {
-  let bombsAround = 0
-  for (let i = rowIndex - 1; i <= rowIndex + 1; i++) {
-    if (i < 0) continue
-    if (i === grid.length) break
-    const row = grid[i]
-    for (let j = columnIndex - 1; j <= columnIndex + 1; j++) {
-      if (j < 0 || (i === rowIndex && j === columnIndex)) continue
-      if (j === row.length) break
-      if (row[j].isBomb) bombsAround += 1
-    }
-  }
-  return bombsAround
+function initializeGrid(): GridType {
+  let bombsCount = 0
+  const grid: GridType = range(ROWS).map((row) => range(COLS).map((column) => {
+    const isBomb = bombsCount < MAX_BOMBS ? Math.floor(Math.random() * 10) % 4 === 0 : false
+    if (isBomb) bombsCount += 1
+    return {isBomb, row, column, neighbors: [], bombsAround: 0, id: crypto.randomUUID()} as CellType
+  }))
+
+  grid.forEach((row) => {
+    row.forEach((cell) => {
+      fillCellNeighborsAndBombs(grid, cell)
+    })
+  })
+  return grid
 }
+
