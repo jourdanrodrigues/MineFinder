@@ -1,11 +1,4 @@
-export interface CellType {
-  id: string
-  isBomb: boolean
-  row: number
-  column: number
-  neighbors: CellType[]
-  bombs: CellType[]
-}
+import Cell from 'Cell'
 
-export type RowType = CellType[]
+export type RowType = Cell[]
 export type GridType = RowType[]

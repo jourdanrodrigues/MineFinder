@@ -1,9 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
-import {CellType} from 'types'
+import Cell from 'Cell'
 
-interface CellProps {
-  cell: CellType
+interface SafeCellProps {
+  cell: Cell
   isRevealed: boolean
   onClick: () => void
 }
@@ -37,11 +37,11 @@ const Wrapper = styled.span<WrapperProps>`
   }
 `
 
-export default function Cell({isRevealed, cell, onClick}: CellProps): JSX.Element {
+export default function SafeCell({isRevealed, cell, onClick}: SafeCellProps): JSX.Element {
   return (
     <Wrapper
       isRevealed={isRevealed}
-      bombsAround={cell.bombs.length}
+      bombsAround={cell.getBombsCount()}
       onClick={onClick}
     />
   )
