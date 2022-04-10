@@ -14,6 +14,7 @@ type GridType = RowType[]
 
 const COLS = 10
 const ROWS = COLS
+const MAX_BOMBS = 10
 
 const CellRow = styled.div`
   display: flex;
@@ -22,8 +23,10 @@ const CellRow = styled.div`
 function App() {
   const [isGameOver, finishTheGame] = useBooleanState(false)
   const grid: GridType = useMemo(() => {
+    let bombsCount = 0
     return range(ROWS).map(() => range(COLS).map(() => {
-      const isBomb = Math.floor(Math.random() * 10) % 2 === 0
+      const isBomb = bombsCount < MAX_BOMBS ? Math.floor(Math.random() * 10) % 4 === 0 : false
+      if (isBomb) bombsCount += 1
       return {isBomb}
     }))
   }, [])
