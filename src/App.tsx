@@ -1,11 +1,10 @@
 import React, {useMemo} from 'react'
 import styled from 'styled-components'
 import SafeCell from 'components/SafeCell'
-import {range} from 'utils'
 import BombCell from 'components/BombCell'
 import {useBooleanState, useSetstate} from 'hooks'
-import {GridType} from 'types'
 import Cell from 'Cell'
+import Grid from 'Grid'
 
 const COLS = 10
 const ROWS = COLS
@@ -16,7 +15,7 @@ const CellRow = styled.div`
 
 function App() {
   const [isGameOver, finishTheGame] = useBooleanState(false)
-  const grid: GridType = useMemo(initializeGrid, [])
+  const grid = useMemo(() => new Grid(ROWS, COLS), [])
   const revealed = useSetstate()
 
   const rows = grid.map((row, i) => (
@@ -43,19 +42,4 @@ function App() {
 }
 
 export default App
-
-function initializeGrid(): GridType {
-  const grid: GridType = range(ROWS).map((row) => range(COLS).map((column) => {
-    const cell = new Cell(row, column)
-    cell.isBomb = Math.floor(Math.random() * 10) % 4 === 0
-    return cell
-  }))
-
-  grid.forEach((row) => {
-    row.forEach((cell) => {
-      cell.fillNeighbors(grid)
-    })
-  })
-  return grid
-}
 

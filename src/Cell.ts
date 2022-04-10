@@ -1,4 +1,4 @@
-import {GridType} from './types'
+import Grid from 'Grid'
 
 export default class Cell {
   private neighbors: Set<Cell>
@@ -33,7 +33,7 @@ export default class Cell {
     return Array.from(this.neighbors.values()).map((neighbor) => neighbor.id)
   }
 
-  fillNeighbors(grid: GridType): void {
+  fillNeighbors(grid: Grid): void {
     for (let rowIndex = this.row - 1; rowIndex <= this.row + 1; rowIndex++) {
       if (rowIndex < 0) continue
       if (rowIndex === grid.length) break
