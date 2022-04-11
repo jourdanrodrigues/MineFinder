@@ -10,6 +10,7 @@ import NumberInput from './components/Input'
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
 `
 
 const Controls = styled.div`
@@ -18,11 +19,12 @@ const Controls = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  margin-top: 3rem;
   margin-bottom: 3rem;
 `
 
 function App() {
-  const [grid, setGrid] = useState<GridType>()
+  const [grid, setGrid] = useState<GridType | null>(null)
   const [bombs, setBombs] = useInput(20)
   const [columns, setColumns] = useInput(10)
   const [rows, setRows] = useInput(10)
@@ -35,7 +37,7 @@ function App() {
         <NumberInput label="Rows" onChange={setRows} value={rows}/>
         <button onClick={loadNewGame}>Start a new game</button>
       </Controls>
-      {!!grid ? <Grid grid={grid} bombs={+bombs}/> : <strong>Start a new game</strong>}
+      {grid && <Grid grid={grid} bombs={+bombs}/>}
     </Wrapper>
   )
 
