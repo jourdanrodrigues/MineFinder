@@ -43,7 +43,7 @@ function App() {
           <SafeCell
             key={cell.id}
             bombsCount={cell.getBombsCount()}
-            isRevealed={!isMarked && (isGameOver || revealedCells.has(cell.id))}
+            isRevealed={isGameOver || (!isMarked && revealedCells.has(cell.id))}
             onClick={() => reveal(cell)}
             isMarked={isMarked}
             onContextMenu={(e) => mark(e, cell)}
