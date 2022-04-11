@@ -1,4 +1,5 @@
 import {useState, useCallback, useMemo} from 'react'
+import {SuperSet} from 'utils'
 
 interface SetState<T> {
   has: (item: T) => boolean
@@ -18,14 +19,14 @@ export function useBooleanState(initialValue: boolean = false): [boolean, () => 
 }
 
 export function useSetstate<T>(): SetState<T> {
-  const [object, setObject] = useState<Set<T>>(new Set())
+  const [object, setObject] = useState<SuperSet<T>>(new SuperSet())
   return useMemo(() => ({
     has: (item) => object.has(item),
-    add: (items) => setObject((state) => new Set([...Array.from(state), ...items])),
+    add: (items) => setObject((state) => new SuperSet([...Array.from(state), ...items])),
     remove: (items) => {
-      const setItems = new Set(items)
-      setObject((state) => new Set(Array.from(state).filter((item) => !setItems.has(item))))
+      const setItems = new SuperSet(items)
+      setObject((state) => new SuperSet(Array.from(state).filter((item) => !setItems.has(item))))
     },
-    clear: () => setObject(new Set()),
+    clear: () => setObject(new SuperSet()),
   }), [object])
 }
