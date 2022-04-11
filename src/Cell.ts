@@ -8,8 +8,8 @@ interface CachesType {
 }
 
 export default class Cell {
-  private nonBombs: SuperSet<Cell>
-  private bombs: SuperSet<Cell>
+  private readonly nonBombs: SuperSet<Cell>
+  private readonly bombs: SuperSet<Cell>
   column: number
   row: number
   isBomb: boolean
@@ -37,6 +37,7 @@ export default class Cell {
   }
 
   hasUnmarkedBombs(markedBombs: SuperSet<string>): boolean {
+    if (this.isBomb) return true
     const bombsCount = this.getBombsCount()
     return bombsCount > 0 && this.getNeighborsIds().intersection(markedBombs).size !== bombsCount
   }
