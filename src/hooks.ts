@@ -1,4 +1,4 @@
-import {useState, useCallback, useMemo} from 'react'
+import React, {useState, useCallback, useMemo} from 'react'
 import {SuperSet} from 'utils'
 
 interface SetState<T> {
@@ -31,4 +31,9 @@ export function useSetstate<T>(): SetState<T> {
     },
     clear: () => setObject(new SuperSet()),
   }), [object])
+}
+
+export function useInput(initialState?: string): [string, React.ChangeEventHandler<HTMLInputElement>] {
+  const [value, setValue] = useState<string>(initialState ?? '')
+  return [value, (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.currentTarget.value)]
 }
