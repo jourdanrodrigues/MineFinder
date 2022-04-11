@@ -1,5 +1,5 @@
-import Grid from 'Grid'
 import {SuperSet} from 'utils'
+import {GridType} from 'types'
 
 interface CachesType {
   ids: SuperSet<string>
@@ -57,7 +57,7 @@ export default class Cell {
     )
   }
 
-  fillNeighbors(grid: Grid): void {
+  fillNeighbors(grid: GridType): void {
     for (let rowIndex = this.row - 1; rowIndex <= this.row + 1; rowIndex++) {
       if (rowIndex < 0) continue
       if (rowIndex === grid.length) break
