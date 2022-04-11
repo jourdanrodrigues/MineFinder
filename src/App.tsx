@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react'
+import React, {useEffect, useState} from 'react'
 import styled from 'styled-components'
 import SafeCell from 'components/SafeCell'
 import BombCell from 'components/BombCell'
@@ -15,12 +15,15 @@ const CellRow = styled.div`
 `
 
 function App() {
-  const [isGameOver, finishTheGame] = useBooleanState(false)
-  const grid = useMemo(() => new Grid(ROWS, COLS, MAX_BOMBS), [])
+  const [isGameOver, finishTheGame, restartGame] = useBooleanState(false)
+  const [grid, setGrid] = useState<Grid>()
   const markedCells = useSetstate<string>()
   const revealedCells = useSetstate<string>()
 
-  const rows = grid.map((row, i) => (
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(loadNewGame, [])
+
+  const rows = (grid || []).map((row, i) => (
     <CellRow key={i}>
       {row.map((cell) => {
         const isMarked = markedCells.has(cell.id)
@@ -53,7 +56,12 @@ function App() {
     </CellRow>
   ))
 
-  return <div>{rows}</div>
+  return (
+    <div>
+      <button onClick={loadNewGame}>Start a new game</button>
+      {rows}
+    </div>
+  )
 
   function reveal(cell: Cell): void {
     if (markedCells.has(cell.id)) return
@@ -75,6 +83,13 @@ function App() {
     } else if (!revealedCells.has(cell.id)) {
       markedCells.add([cell.id])
     }
+  }
+
+  function loadNewGame() {
+    setGrid(new Grid(ROWS, COLS, MAX_BOMBS))
+    markedCells.clear()
+    revealedCells.clear()
+    restartGame()
   }
 }
 
