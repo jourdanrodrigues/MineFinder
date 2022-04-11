@@ -24,6 +24,15 @@ export default class Cell {
     this.bombs = new SuperSet()
   }
 
+  isNeighborOf(cell: Cell): boolean {
+    return (
+      this.row >= cell.row - 1 &&
+      this.row <= cell.row + 1 &&
+      this.column >= cell.column - 1 &&
+      this.column <= cell.column + 1
+    )
+  }
+
   getBombsCount(): number {
     return this.bombs.size
   }
