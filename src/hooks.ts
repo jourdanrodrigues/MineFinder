@@ -33,7 +33,7 @@ export function useSetstate<T>(): SetState<T> {
   }), [object])
 }
 
-export function useInput(initialState?: string): [string, React.ChangeEventHandler<HTMLInputElement>] {
-  const [value, setValue] = useState<string>(initialState ?? '')
+export function useInput(initialState?: string | number): [string, React.ChangeEventHandler<HTMLInputElement>] {
+  const [value, setValue] = useState<string>('' + (initialState ?? ''))
   return [value, (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.currentTarget.value)]
 }

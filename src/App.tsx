@@ -2,23 +2,41 @@ import React, {useState} from 'react'
 import Cell from 'Cell'
 import {range} from 'utils'
 import {GridType} from 'types'
-import Grid from 'Grid'
+import Grid from 'components/Grid'
 import {useInput} from 'hooks'
+import styled from 'styled-components'
+import NumberInput from './components/Input'
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
+const Controls = styled.div`
+  width: 15rem;
+  height: 7rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+`
 
 function App() {
   const [grid, setGrid] = useState<GridType>()
-  const [bombs, setBombs] = useInput()
-  const [columns, setColumns] = useInput()
-  const [rows, setRows] = useInput()
+  const [bombs, setBombs] = useInput(20)
+  const [columns, setColumns] = useInput(10)
+  const [rows, setRows] = useInput(10)
 
   return (
-    <div>
-      <button onClick={loadNewGame}>Start a new game</button>
-      <label>Bombs: <input type="number" onChange={setBombs} value={bombs}/></label>
-      <label>Columns: <input type="number" onChange={setColumns} value={columns}/></label>
-      <label>Rows: <input type="number" onChange={setRows} value={rows}/></label>
-      {!!grid ? <Grid grid={grid} bombs={+bombs}/> : 'Loading grid'}
-    </div>
+    <Wrapper>
+      <Controls>
+        <NumberInput label="Bombs" onChange={setBombs} value={bombs}/>
+        <NumberInput label="Columns" onChange={setColumns} value={columns}/>
+        <NumberInput label="Rows" onChange={setRows} value={rows}/>
+        <button onClick={loadNewGame}>Start a new game</button>
+      </Controls>
+      {!!grid ? <Grid grid={grid} bombs={+bombs}/> : <strong>Start a new game</strong>}
+    </Wrapper>
   )
 
   function loadNewGame() {
