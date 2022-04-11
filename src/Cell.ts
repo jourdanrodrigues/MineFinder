@@ -1,8 +1,15 @@
 import Grid from 'Grid'
+import {SuperSet} from 'utils'
+
+interface CachesType {
+  ids: SuperSet<string>
+  markedBombs: SuperSet<string>
+
+}
 
 export default class Cell {
-  private neighbors: Set<Cell>
-  private bombs: Set<Cell>
+  private nonBombs: SuperSet<Cell>
+  private bombs: SuperSet<Cell>
   column: number
   row: number
   isBomb: boolean
@@ -13,28 +20,38 @@ export default class Cell {
     this.isBomb = false
     this.row = row
     this.column = column
-    this.neighbors = new Set()
-    this.bombs = new Set()
+    this.nonBombs = new SuperSet()
+    this.bombs = new SuperSet()
   }
 
   getBombsCount(): number {
     return this.bombs.size
   }
 
-  hasBombs(): boolean {
-    return this.bombs.size > 0
+  getNeighbors(): Cell[] {
+    return [...Array.from(this.nonBombs), ...Array.from(this.bombs)]
   }
 
-  getSafeNeighbors(): Cell[] {
-    return Cell.findSafeNeighbors(this, new Set())
+  getNeighborsIds(): SuperSet<string> {
+    return new SuperSet(this.getNeighbors().map(({id}) => id))
   }
 
-  private static findSafeNeighbors(cell: Cell, idsCache: Set<string>): Cell[] {
-    if (idsCache.has(cell.id) || cell.isBomb || cell.hasBombs()) return []
-    idsCache.add(cell.id)
-    const neighbors = Array.from(cell.neighbors)
+  hasUnmarkedBombs(markedBombs: SuperSet<string>): boolean {
+    const bombsCount = this.getBombsCount()
+    return bombsCount > 0 && this.getNeighborsIds().intersection(markedBombs).size !== bombsCount
+  }
+
+  getNeighborsToReveal(markedBombs: SuperSet<string>): Cell[] {
+    return Cell.findNeighbors(this, {markedBombs, ids: new SuperSet()})
+  }
+
+  private static findNeighbors(cell: Cell, caches: CachesType): Cell[] {
+    const {ids, markedBombs} = caches
+    if (ids.has(cell.id) || cell.hasUnmarkedBombs(markedBombs)) return []
+    ids.add(cell.id)
+    const neighbors = cell.getNeighbors()
     return neighbors.reduce(
-      (output, neighbor) => [...output, neighbor, ...this.findSafeNeighbors(neighbor, idsCache)],
+      (output, neighbor) => [...output, neighbor, ...this.findNeighbors(neighbor, caches)],
       [] as Cell[]
     )
   }
@@ -51,7 +68,7 @@ export default class Cell {
         if (neighbor.isBomb) {
           this.bombs.add(neighbor)
         } else {
-          this.neighbors.add(neighbor)
+          this.nonBombs.add(neighbor)
         }
       }
     }

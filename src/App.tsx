@@ -17,14 +17,18 @@ const CellRow = styled.div`
 function App() {
   const [isGameOver, finishTheGame] = useBooleanState(false)
   const grid = useMemo(() => new Grid(ROWS, COLS, MAX_BOMBS), [])
-  const marked = useSetstate()
-  const revealed = useSetstate()
+  const markedCells = useSetstate<string>()
+  const revealedCells = useSetstate<string>()
 
   const rows = grid.map((row, i) => (
     <CellRow key={i}>
       {row.map((cell) => {
-        const isMarked = marked.has(cell.id)
+        const isMarked = markedCells.has(cell.id)
+        const isRevealed = revealedCells.has(cell.id)
         if (cell.isBomb) {
+          if (isRevealed) {
+            revealBomb(cell)
+          }
           return (
             <BombCell
               key={cell.id}
@@ -39,7 +43,7 @@ function App() {
           <SafeCell
             key={cell.id}
             bombsCount={cell.getBombsCount()}
-            isRevealed={!isMarked && (isGameOver || revealed.has(cell.id))}
+            isRevealed={!isMarked && (isGameOver || revealedCells.has(cell.id))}
             onClick={() => reveal(cell)}
             isMarked={isMarked}
             onContextMenu={(e) => mark(e, cell)}
@@ -52,23 +56,24 @@ function App() {
   return <div>{rows}</div>
 
   function reveal(cell: Cell): void {
-    if (marked.has(cell.id)) return
-    revealed.add([cell.id, ...cell.getSafeNeighbors().map(({id}) => id)])
+    if (markedCells.has(cell.id)) return
+    const neighbors = cell.getNeighborsToReveal(markedCells.getCopy())
+    revealedCells.add([cell.id, ...neighbors.map(({id}) => id)])
   }
 
-  function revealBomb(bomb: Cell): void {
-    if (!marked.has(bomb.id)) {
-      marked.clear()
-      finishTheGame()
-    }
+  function revealBomb(bomb: Cell, force: boolean = false): void {
+    if (markedCells.has(bomb.id) && !force) return
+    markedCells.clear()
+    revealedCells.clear()
+    finishTheGame()
   }
 
   function mark(e: React.MouseEvent<HTMLSpanElement>, cell: Cell): void {
     e.preventDefault()
-    if (marked.has(cell.id)) {
-      marked.remove([cell.id])
-    } else if (!revealed.has(cell.id)) {
-      marked.add([cell.id])
+    if (markedCells.has(cell.id)) {
+      markedCells.remove([cell.id])
+    } else if (!revealedCells.has(cell.id)) {
+      markedCells.add([cell.id])
     }
   }
 }
