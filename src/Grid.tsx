@@ -3,9 +3,10 @@ import BombCell from 'components/BombCell'
 import SafeCell from 'components/SafeCell'
 import Cell from 'Cell'
 import styled from 'styled-components'
-import {useBooleanState, useSetstate} from './hooks'
+import {useBooleanState, useSetstate} from 'hooks'
 import {GridType} from 'types'
-import {range} from './utils'
+import {range} from 'utils'
+import {NeighborFinder} from 'NeighborFinder'
 
 interface GridProps {
   grid: GridType
@@ -75,7 +76,8 @@ export default function Grid({grid: gridProp, bombs}: GridProps) {
       setFirstMove(false)
     }
     if (markedCells.has(cell.id)) return
-    const neighbors = cell.getNeighborsToReveal(markedCells.getCopy())
+    const neighborFinder = new NeighborFinder(markedCells.getCopy())
+    const neighbors = neighborFinder.getNeighborsToReveal(cell)
     revealedCells.add([cell.id, ...neighbors.map(({id}) => id)])
   }
 

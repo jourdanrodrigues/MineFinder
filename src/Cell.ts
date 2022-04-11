@@ -1,12 +1,6 @@
 import {SuperSet} from 'utils'
 import {GridType} from 'types'
 
-interface CachesType {
-  ids: SuperSet<string>
-  markedBombs: SuperSet<string>
-
-}
-
 export default class Cell {
   private readonly nonBombs: SuperSet<Cell>
   private readonly bombs: SuperSet<Cell>
@@ -37,33 +31,16 @@ export default class Cell {
     return this.bombs.size
   }
 
+  hasBombs(): boolean {
+    return this.bombs.size > 0
+  }
+
   getNeighbors(): Cell[] {
     return [...Array.from(this.nonBombs), ...Array.from(this.bombs)]
   }
 
   getNeighborsIds(): SuperSet<string> {
     return new SuperSet(this.getNeighbors().map(({id}) => id))
-  }
-
-  hasUnmarkedBombs(markedBombs: SuperSet<string>): boolean {
-    if (this.isBomb) return true
-    const bombsCount = this.getBombsCount()
-    return bombsCount > 0 && this.getNeighborsIds().intersection(markedBombs).size !== bombsCount
-  }
-
-  getNeighborsToReveal(markedBombs: SuperSet<string>): Cell[] {
-    return Cell.findNeighbors(this, {markedBombs, ids: new SuperSet()})
-  }
-
-  private static findNeighbors(cell: Cell, caches: CachesType): Cell[] {
-    const {ids, markedBombs} = caches
-    if (ids.has(cell.id) || cell.hasUnmarkedBombs(markedBombs)) return []
-    ids.add(cell.id)
-    const neighbors = cell.getNeighbors()
-    return neighbors.reduce(
-      (output, neighbor) => [...output, neighbor, ...this.findNeighbors(neighbor, caches)],
-      [] as Cell[]
-    )
   }
 
   fillNeighbors(grid: GridType): void {
