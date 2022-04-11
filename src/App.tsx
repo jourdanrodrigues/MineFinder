@@ -17,16 +17,34 @@ const CellRow = styled.div`
 function App() {
   const [isGameOver, finishTheGame] = useBooleanState(false)
   const grid = useMemo(() => new Grid(ROWS, COLS, MAX_BOMBS), [])
+  const marked = useSetstate()
   const revealed = useSetstate()
 
   const rows = grid.map((row, i) => (
     <CellRow key={i}>
       {row.map((cell) => {
+        const isMarked = marked.has(cell.id)
         if (cell.isBomb) {
-          return <BombCell key={cell.id} isRevealed={isGameOver} onClick={finishTheGame}/>
+          return (
+            <BombCell
+              key={cell.id}
+              isRevealed={isGameOver}
+              onClick={() => revealBomb(cell)}
+              isMarked={isMarked}
+              onContextMenu={(e) => mark(e, cell)}
+            />
+          )
         }
-        const isRevealed = isGameOver || revealed.data.has(cell.id)
-        return <SafeCell key={cell.id} isRevealed={isRevealed} cell={cell} onClick={() => reveal(cell)}/>
+        return (
+          <SafeCell
+            key={cell.id}
+            bombsCount={cell.getBombsCount()}
+            isRevealed={!isMarked && (isGameOver || revealed.has(cell.id))}
+            onClick={() => reveal(cell)}
+            isMarked={isMarked}
+            onContextMenu={(e) => mark(e, cell)}
+          />
+        )
       })}
     </CellRow>
   ))
@@ -34,7 +52,24 @@ function App() {
   return <div>{rows}</div>
 
   function reveal(cell: Cell): void {
-    revealed.addMany([cell.id, ...cell.getSafeNeighbors().map(({id}) => id)])
+    if (marked.has(cell.id)) return
+    revealed.add([cell.id, ...cell.getSafeNeighbors().map(({id}) => id)])
+  }
+
+  function revealBomb(bomb: Cell): void {
+    if (!marked.has(bomb.id)) {
+      marked.clear()
+      finishTheGame()
+    }
+  }
+
+  function mark(e: React.MouseEvent<HTMLSpanElement>, cell: Cell): void {
+    e.preventDefault()
+    if (marked.has(cell.id)) {
+      marked.remove([cell.id])
+    } else if (!revealed.has(cell.id)) {
+      marked.add([cell.id])
+    }
   }
 }
 

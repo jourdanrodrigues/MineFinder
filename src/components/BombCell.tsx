@@ -1,22 +1,18 @@
-import React from 'react'
 import styled from 'styled-components'
 
 interface BombCellProps {
-  onClick: () => void
   isRevealed: boolean
+  isMarked: boolean
 }
 
-interface WrapperProps {
-  isRevealed: boolean
-}
-
-const Wrapper = styled.span<WrapperProps>`
+const BombCell = styled.span<BombCellProps>`
   display: block;
   width: 3rem;
   height: 3rem;
   border-style: solid;
   border-color: black;
-  cursor: ${(props: WrapperProps) => props.isRevealed ? 'initial' : 'pointer'};
+  cursor: ${(props: BombCellProps) => props.isRevealed ? 'initial' : 'pointer'};
+  background-color: ${(props: BombCellProps) => props.isMarked ? 'lightcoral' : 'initial'};
   
   &:after {
     display: block;
@@ -25,10 +21,10 @@ const Wrapper = styled.span<WrapperProps>`
     top: 50%;
     left: 50%;
     position: relative;
-    width: ${(props: WrapperProps) => props.isRevealed ? '2rem' : 0};
-    height: ${(props: WrapperProps) => props.isRevealed ? '2rem' : 0};
-    border-style: ${(props: WrapperProps) => props.isRevealed ? 'solid' : 'hidden'};
-    border-width: ${(props: WrapperProps) => props.isRevealed ? 'medium' : 0};
+    width: ${(props: BombCellProps) => props.isRevealed ? '2rem' : 0};
+    height: ${(props: BombCellProps) => props.isRevealed ? '2rem' : 0};
+    border-style: ${(props: BombCellProps) => props.isRevealed ? 'solid' : 'hidden'};
+    border-width: ${(props: BombCellProps) => props.isRevealed ? 'medium' : 0};
     border-color: black;
     border-radius: 50%;
     transition: all .1s ease-in-out;
@@ -36,6 +32,4 @@ const Wrapper = styled.span<WrapperProps>`
   }
 `
 
-export default function BombCell({onClick, isRevealed}: BombCellProps) {
-  return <Wrapper isRevealed={isRevealed} onClick={onClick}/>
-}
+export default BombCell
