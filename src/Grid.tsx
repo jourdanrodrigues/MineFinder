@@ -90,6 +90,7 @@ export default function Grid({grid: gridProp, bombs}: GridProps) {
 
   function mark(e: React.MouseEvent<HTMLSpanElement>, cell: Cell): void {
     e.preventDefault()
+    if (isGameOver) return
     if (markedCells.has(cell.id)) {
       markedCells.remove([cell.id])
     } else if (!revealedCells.has(cell.id)) {
