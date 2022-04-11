@@ -26,7 +26,7 @@ const SafeCell = styled.span<SafeCellProps>`
 
   &:after {
     display: block;
-    content: '${(props: SafeCellProps) => props.isRevealed ? props.bombsCount : ''}';
+    content: '${(props: SafeCellProps) => props.isRevealed && props.bombsCount > 0 ? props.bombsCount : ''}';
     text-align: center;
     line-height: 80%;
     font-size: ${(props: SafeCellProps) => props.isRevealed ? '2rem' : 0};
