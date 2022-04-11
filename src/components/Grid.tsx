@@ -13,6 +13,12 @@ interface GridProps {
   bombs: number
 }
 
+const Wrapper = styled.div`
+  width: fit-content;
+  border-style: solid;
+  border-color: black;
+`
+
 const CellRow = styled.div`
   display: flex;
 `
@@ -34,7 +40,7 @@ export default function Grid({grid: gridProp, bombs}: GridProps) {
   }, [gridProp])
 
   return (
-    <div>
+    <Wrapper>
       {grid.map((row, i) => (
         <CellRow key={i}>
           {row.map((cell) => {
@@ -67,7 +73,7 @@ export default function Grid({grid: gridProp, bombs}: GridProps) {
           })}
         </CellRow>
       ))}
-    </div>
+    </Wrapper>
   )
 
   function reveal(cell: Cell): void {
