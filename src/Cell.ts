@@ -1,4 +1,4 @@
-import {SuperSet} from 'utils'
+import {createUUID, SuperSet} from 'utils'
 import {GridType} from 'types'
 
 export default class Cell {
@@ -10,7 +10,7 @@ export default class Cell {
   id: string
 
   constructor(row: number, column: number) {
-    this.id = crypto.randomUUID()
+    this.id = createUUID()
     this.isBomb = false
     this.row = row
     this.column = column
