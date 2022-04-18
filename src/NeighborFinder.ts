@@ -25,6 +25,8 @@ export class NeighborFinder {
   hasUnmarkedBombs(cell: Cell): boolean {
     if (cell.isBomb) return true
     const bombsCount = cell.getBombsCount()
-    return bombsCount > 0 && cell.getNeighborsIds().intersection(this.markedCells).size !== bombsCount
+    if (bombsCount === 0) return false
+    const markedNeighborsCount = cell.getNeighborsIds().intersection(this.markedCells).size
+    return markedNeighborsCount !== bombsCount
   }
 }
