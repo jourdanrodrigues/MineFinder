@@ -19,7 +19,7 @@ export function useBooleanState(initialValue: boolean = false): [boolean, () => 
   ]
 }
 
-export function useSetstate<T>(): SetState<T> {
+export function useSetState<T>(): SetState<T> {
   const [object, setObject] = useState<SuperSet<T>>(new SuperSet())
   return useMemo(() => ({
     getCopy: () => new SuperSet(object),

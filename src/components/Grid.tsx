@@ -3,7 +3,7 @@ import BombCell from 'components/BombCell'
 import SafeCell from 'components/SafeCell'
 import Cell from 'Cell'
 import styled from 'styled-components'
-import {useBooleanState, useSetstate} from 'hooks'
+import {useBooleanState, useSetState} from 'hooks'
 import {GridType} from 'types'
 import {range} from 'utils'
 import {NeighborFinder} from 'NeighborFinder'
@@ -26,8 +26,8 @@ const CellRow = styled.div`
 export default function Grid({grid: gridProp, bombs}: GridProps) {
   const [isGameOver, finishTheGame, restartGame] = useBooleanState(false)
   const [isFirstMove, setFirstMove] = useState(true)
-  const markedCells = useSetstate<string>()
-  const revealedCells = useSetstate<string>()
+  const markedCells = useSetState<string>()
+  const revealedCells = useSetState<string>()
   const [grid, setGrid] = useState(gridProp)
 
   useEffect(() => {
