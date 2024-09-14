@@ -1,12 +1,12 @@
 import { cn } from '@/utils.ts';
 
 type SafeCellProps = {
-  readonly isRevealed: boolean;
-  readonly isMarked: boolean;
-  readonly isBomb: boolean;
-  readonly bombsCount: number;
-  readonly onReveal: () => void;
-  readonly onMarkBomb: () => void;
+  isRevealed: boolean;
+  isMarked: boolean;
+  isBomb: boolean;
+  bombsCount: number;
+  onReveal: () => void;
+  onMarkBomb: () => void;
 };
 
 export default function PresentationCell({

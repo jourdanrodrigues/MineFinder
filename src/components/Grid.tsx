@@ -6,7 +6,7 @@ import { GridType } from '@/types';
 import { range } from '@/utils';
 import { NeighborFinder } from '@/NeighborFinder';
 
-type GridProps = { readonly grid: GridType; readonly bombs: number };
+type GridProps = { grid: GridType; bombs: number };
 
 export default function Grid({ grid: gridProp, bombs }: GridProps) {
   const [isGameOver, setIsGameOver] = useState(false);
