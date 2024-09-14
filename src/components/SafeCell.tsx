@@ -28,8 +28,8 @@ const SafeCell = styled.span<SafeCellProps>`
     display: block;
     content: '${(props: SafeCellProps) => props.isRevealed && props.bombsCount > 0 ? props.bombsCount : ''}';
     text-align: center;
-    line-height: 80%;
-    font-size: ${(props: SafeCellProps) => props.isRevealed ? '2rem' : 0};
+    line-height: 100%;
+    font-size: ${(props: SafeCellProps) => props.isRevealed ? '2rem' : '2rem'};
     width: 2rem;
     height: 2rem;
     transition: font-size .1s ease-in-out;
