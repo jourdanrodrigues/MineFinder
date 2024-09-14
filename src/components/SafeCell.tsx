@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 interface SafeCellProps {
   isRevealed: boolean
@@ -17,9 +17,9 @@ const SafeCell = styled.span<SafeCellProps>`
   cursor: ${(props: SafeCellProps) => props.isRevealed ? 'initial' : 'pointer'};
   background-color: ${
     (props: SafeCellProps) => {
-      if (props.isMarked) return 'lightcoral'
-      if (props.isRevealed) return 'lightgrey'
-      return 'initial'
+      if (props.isMarked) return 'lightcoral';
+      if (props.isRevealed) return 'lightgrey';
+      return 'initial';
     }
   };
   transition: background-color .1s ease-in-out;
@@ -34,6 +34,6 @@ const SafeCell = styled.span<SafeCellProps>`
     height: 2rem;
     transition: font-size .1s ease-in-out;
   }
-`
+`;
 
-export default SafeCell
+export default SafeCell;

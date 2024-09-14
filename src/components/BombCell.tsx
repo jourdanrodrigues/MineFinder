@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 interface BombCellProps {
   isRevealed: boolean
@@ -13,7 +13,7 @@ const BombCell = styled.span<BombCellProps>`
   border-color: black;
   cursor: ${(props: BombCellProps) => props.isRevealed ? 'initial' : 'pointer'};
   background-color: ${(props: BombCellProps) => props.isMarked ? 'lightcoral' : 'initial'};
-  
+
   &:after {
     display: block;
     content: '';
@@ -30,6 +30,6 @@ const BombCell = styled.span<BombCellProps>`
     transition: all .1s ease-in-out;
     transition-property: height, width, border-width;
   }
-`
+`;
 
-export default BombCell
+export default BombCell;

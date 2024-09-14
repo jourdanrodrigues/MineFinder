@@ -1,5 +1,5 @@
-import React, {useState, useCallback, useMemo} from 'react'
-import {SuperSet} from 'utils'
+import React, { useState, useCallback, useMemo } from 'react';
+import { SuperSet } from '@/utils';
 
 interface SetState<T> {
   has: (item: T) => boolean
@@ -15,25 +15,25 @@ export function useBooleanState(initialValue: boolean = false): [boolean, () => 
     flag,
     useCallback(() => setFlag(true), []),
     useCallback(() => setFlag(false), []),
-    useCallback(() => setFlag((value) => !value), []),
-  ]
+    useCallback(() => setFlag((value) => !value), [])
+  ];
 }
 
 export function useSetState<T>(): SetState<T> {
-  const [object, setObject] = useState<SuperSet<T>>(new SuperSet())
+  const [object, setObject] = useState<SuperSet<T>>(new SuperSet());
   return useMemo(() => ({
     getCopy: () => new SuperSet(object),
     has: (item) => object.has(item),
     add: (items) => setObject((state) => new SuperSet([...Array.from(state), ...items])),
     remove: (items) => {
-      const setItems = new SuperSet(items)
-      setObject((state) => new SuperSet(Array.from(state).filter((item) => !setItems.has(item))))
+      const setItems = new SuperSet(items);
+      setObject((state) => new SuperSet(Array.from(state).filter((item) => !setItems.has(item))));
     },
-    clear: () => setObject(new SuperSet()),
-  }), [object])
+    clear: () => setObject(new SuperSet())
+  }), [object]);
 }
 
 export function useInput(initialState?: string | number): [string, React.ChangeEventHandler<HTMLInputElement>] {
-  const [value, setValue] = useState<string>('' + (initialState ?? ''))
-  return [value, (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.currentTarget.value)]
+  const [value, setValue] = useState<string>('' + (initialState ?? ''));
+  return [value, (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.currentTarget.value)];
 }
