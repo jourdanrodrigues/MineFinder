@@ -22,23 +22,20 @@ function App() {
           Start a new game
         </button>
       </div>
-      {grid ? <Grid bombs={+bombs} grid={grid} /> : null}
+      {grid && <Grid bombs={+bombs} grid={grid} />}
     </div>
   );
 
   function loadNewGame() {
-    setGrid(buildGrid(+rows, +columns));
+    const newGrid = range(+rows).map((rowIndex) => {
+      const rowId = createUUID();
+      const cells = range(+columns).map(
+        (columnIndex) => new Cell(rowIndex, columnIndex),
+      );
+      return { id: rowId, cells };
+    });
+    setGrid(newGrid);
   }
 }
 
 export default App;
-
-function buildGrid(numRows: number, numColumns: number): GridType {
-  return range(numRows).map((rowIndex) => {
-    const rowId = createUUID();
-    const columns = range(numColumns).map(
-      (columnIndex) => new Cell(rowIndex, columnIndex),
-    );
-    return { id: rowId, cells: columns };
-  });
-}
