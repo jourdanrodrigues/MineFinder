@@ -14,11 +14,9 @@ describe('Cell.isNeighborOf', () => {
     ];
     const subject = new Cell(1, 1);
 
-    const output = [
-      ...new Set(neighbors.map((neighbor) => neighbor.isNeighborOf(subject))),
-    ];
-
-    expect(output).toEqual([true]);
+    expect(neighbors.every((neighbor) => neighbor.isNeighborOf(subject))).toBe(
+      true,
+    );
   });
   it('should return false if other is not neighbor', () => {
     const neighbors = [
@@ -31,10 +29,8 @@ describe('Cell.isNeighborOf', () => {
     ];
     const subject = new Cell(5, 5);
 
-    const output = [
-      ...new Set(neighbors.map((neighbor) => neighbor.isNeighborOf(subject))),
-    ];
-
-    expect(output).toEqual([false]);
+    expect(neighbors.every((neighbor) => neighbor.isNeighborOf(subject))).toBe(
+      false,
+    );
   });
 });
