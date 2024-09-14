@@ -1,55 +1,67 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import tseslint from 'typescript-eslint'
+import js from '@eslint/js';
+import globals from 'globals';
+import react from 'eslint-plugin-react';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import tseslint from 'typescript-eslint';
+import prettier from 'eslint-plugin-prettier';
 
 export default tseslint.config(
   { ignores: ['dist'] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
-    files: ['**/*.{ts,tsx}'],
+    files: ['**/*.{js,ts,tsx}'],
     languageOptions: {
+      ...react.configs.flat.recommended.languageOptions,
       ecmaVersion: 2020,
-      globals: {...globals.browser, ...globals.jest, ...globals.node},
+      globals: { ...globals.browser, ...globals.jest, ...globals.node },
     },
     plugins: {
+      react,
+      prettier,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
+      'prettier/prettier': [
+        'error',
+        { singleQuote: true, jsxSingleQuote: true },
       ],
-      'no-var': 'warn',
-      'object-shorthand': ['warn', 'properties'],
-
-      'accessor-pairs': ['error', { setWithoutGet: true, enforceForClassMembers: true }],
+      'no-var': 'error',
+      'object-shorthand': ['error', 'properties'],
+      'jsx-quotes': ['error', 'prefer-single'],
+      'accessor-pairs': [
+        'error',
+        { setWithoutGet: true, enforceForClassMembers: true },
+      ],
       'array-bracket-spacing': ['error', 'never'],
-      'array-callback-return': ['error', {
-        allowImplicit: false,
-        checkForEach: false
-      }],
+      'array-callback-return': [
+        'error',
+        {
+          allowImplicit: false,
+          checkForEach: false,
+        },
+      ],
       'arrow-spacing': ['error', { before: true, after: true }],
       'block-spacing': ['error', 'always'],
       'brace-style': ['error', '1tbs', { allowSingleLine: true }],
-      camelcase: ['error', {
-        allow: ['^UNSAFE_'],
-        properties: 'never',
-        ignoreGlobals: true
-      }],
-      'comma-dangle': ['error', {
-        arrays: 'never',
-        objects: 'never',
-        imports: 'never',
-        exports: 'never',
-        functions: 'never'
-      }],
+      camelcase: [
+        'error',
+        {
+          allow: ['^UNSAFE_'],
+          properties: 'never',
+          ignoreGlobals: true,
+        },
+      ],
+      'comma-dangle': ['error', 'always-multiline'],
       'comma-spacing': ['error', { before: false, after: true }],
       'comma-style': ['error', 'last'],
-      'computed-property-spacing': ['error', 'never', { enforceForClassMembers: true }],
+      'computed-property-spacing': [
+        'error',
+        'never',
+        { enforceForClassMembers: true },
+      ],
       'constructor-super': 'error',
       curly: ['error', 'multi-line'],
       'default-case-last': 'error',
@@ -59,45 +71,17 @@ export default tseslint.config(
       eqeqeq: ['error', 'always', { null: 'ignore' }],
       'func-call-spacing': ['error', 'never'],
       'generator-star-spacing': ['error', { before: true, after: true }],
-      indent: ['error', 2, {
-        SwitchCase: 1,
-        VariableDeclarator: 1,
-        outerIIFEBody: 1,
-        MemberExpression: 1,
-        FunctionDeclaration: { parameters: 1, body: 1 },
-        FunctionExpression: { parameters: 1, body: 1 },
-        CallExpression: { arguments: 1 },
-        ArrayExpression: 1,
-        ObjectExpression: 1,
-        ImportDeclaration: 1,
-        flatTernaryExpressions: false,
-        ignoreComments: false,
-        ignoredNodes: [
-          'TemplateLiteral *',
-          'JSXElement',
-          'JSXElement > *',
-          'JSXAttribute',
-          'JSXIdentifier',
-          'JSXNamespacedName',
-          'JSXMemberExpression',
-          'JSXSpreadAttribute',
-          'JSXExpressionContainer',
-          'JSXOpeningElement',
-          'JSXClosingElement',
-          'JSXFragment',
-          'JSXOpeningFragment',
-          'JSXClosingFragment',
-          'JSXText',
-          'JSXEmptyExpression',
-          'JSXSpreadChild'
-        ],
-        offsetTernaryExpressions: true
-      }],
       'key-spacing': ['error', { beforeColon: false, afterColon: true }],
       'keyword-spacing': ['error', { before: true, after: true }],
-      'lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }],
-      'multiline-ternary': ['error', 'always-multiline'],
-      'new-cap': ['error', { newIsCap: true, capIsNew: false, properties: true }],
+      'lines-between-class-members': [
+        'error',
+        'always',
+        { exceptAfterSingleLine: true },
+      ],
+      'new-cap': [
+        'error',
+        { newIsCap: true, capIsNew: false, properties: true },
+      ],
       'new-parens': 'error',
       'no-array-constructor': 'error',
       'no-async-promise-executor': 'error',
@@ -140,14 +124,17 @@ export default tseslint.config(
       'no-misleading-character-class': 'error',
       'no-prototype-builtins': 'error',
       'no-useless-catch': 'error',
-      'no-mixed-operators': ['error', {
-        groups: [
-          ['==', '!=', '===', '!==', '>', '>=', '<', '<='],
-          ['&&', '||'],
-          ['in', 'instanceof']
-        ],
-        allowSamePrecedence: true
-      }],
+      'no-mixed-operators': [
+        'error',
+        {
+          groups: [
+            ['==', '!=', '===', '!==', '>', '>=', '<', '<='],
+            ['&&', '||'],
+            ['in', 'instanceof'],
+          ],
+          allowSamePrecedence: true,
+        },
+      ],
       'no-mixed-spaces-and-tabs': 'error',
       'no-multi-spaces': 'error',
       'no-multi-str': 'error',
@@ -183,18 +170,27 @@ export default tseslint.config(
       'no-unreachable-loop': 'error',
       'no-unsafe-finally': 'error',
       'no-unsafe-negation': 'error',
-      'no-unused-expressions': ['error', {
-        allowShortCircuit: true,
-        allowTernary: true,
-        allowTaggedTemplates: true
-      }],
-      'no-unused-vars': ['error', {
-        args: 'none',
-        caughtErrors: 'none',
-        ignoreRestSiblings: true,
-        vars: 'all'
-      }],
-      '@typescript-eslint/no-use-before-define': ['error', { functions: false }],
+      'no-unused-expressions': [
+        'error',
+        {
+          allowShortCircuit: true,
+          allowTernary: true,
+          allowTaggedTemplates: true,
+        },
+      ],
+      'no-unused-vars': [
+        'error',
+        {
+          args: 'none',
+          caughtErrors: 'none',
+          ignoreRestSiblings: true,
+          vars: 'all',
+        },
+      ],
+      '@typescript-eslint/no-use-before-define': [
+        'error',
+        { functions: false },
+      ],
       'no-useless-call': 'error',
       'no-useless-computed-key': 'error',
       'no-useless-constructor': 'error',
@@ -206,15 +202,29 @@ export default tseslint.config(
       'no-with': 'error',
       'object-curly-newline': ['error', { multiline: true, consistent: true }],
       'object-curly-spacing': ['error', 'always'],
-      'object-property-newline': ['error', { allowMultiplePropertiesPerLine: true }],
+      'object-property-newline': [
+        'error',
+        { allowMultiplePropertiesPerLine: true },
+      ],
       'one-var': ['error', { initialized: 'never' }],
-      'operator-linebreak': ['error', 'after', { overrides: { '?': 'before', ':': 'before', '|>': 'before' } }],
-      'padded-blocks': ['error', { blocks: 'never', switches: 'never', classes: 'never' }],
+      'operator-linebreak': [
+        'error',
+        'after',
+        { overrides: { '?': 'before', ':': 'before', '|>': 'before' } },
+      ],
+      'padded-blocks': [
+        'error',
+        { blocks: 'never', switches: 'never', classes: 'never' },
+      ],
       'prefer-const': ['error', { destructuring: 'all' }],
       'prefer-promise-reject-errors': 'error',
       'prefer-regex-literals': ['error', { disallowRedundantWrapping: true }],
       'quote-props': ['error', 'as-needed'],
-      quotes: ['error', 'single', { avoidEscape: true, allowTemplateLiterals: false }],
+      quotes: [
+        'error',
+        'single',
+        { avoidEscape: true, allowTemplateLiterals: false },
+      ],
       'rest-spread-spacing': ['error', 'never'],
       semi: ['error', 'always'],
       'semi-spacing': ['error', { before: false, after: true }],
@@ -223,22 +233,43 @@ export default tseslint.config(
       'space-in-parens': ['error', 'never'],
       'space-infix-ops': 'error',
       'space-unary-ops': ['error', { words: true, nonwords: false }],
-      'spaced-comment': ['error', 'always', {
-        line: { markers: ['*package', '!', '/', ',', '='] },
-        block: { balanced: true, markers: ['*package', '!', ',', ':', '::', 'flow-include'], exceptions: ['*'] }
-      }],
+      'spaced-comment': [
+        'error',
+        'always',
+        {
+          line: { markers: ['*package', '!', '/', ',', '='] },
+          block: {
+            balanced: true,
+            markers: ['*package', '!', ',', ':', '::', 'flow-include'],
+            exceptions: ['*'],
+          },
+        },
+      ],
       'symbol-description': 'error',
       'template-curly-spacing': ['error', 'never'],
       'template-tag-spacing': ['error', 'never'],
       'unicode-bom': ['error', 'never'],
-      'use-isnan': ['error', {
-        enforceForSwitchCase: true,
-        enforceForIndexOf: true
-      }],
+      'use-isnan': [
+        'error',
+        {
+          enforceForSwitchCase: true,
+          enforceForIndexOf: true,
+        },
+      ],
       'valid-typeof': ['error', { requireStringLiterals: true }],
       'wrap-iife': ['error', 'any', { functionPrototypeMethods: true }],
       'yield-star-spacing': ['error', 'both'],
       yoda: ['error', 'never'],
+
+      'react/jsx-no-bind': 'off',
+      'react/jsx-no-literals': 'off',
+      'react/jsx-newline': ['error', { prevent: true }],
+      'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
+      'react-refresh/only-export-components': [
+        'error',
+        { allowConstantExport: true },
+      ],
+      'react/react-in-jsx-scope': 'off',
     },
   },
-)
+);

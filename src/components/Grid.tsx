@@ -1,101 +1,87 @@
-import React, { useEffect, useState } from 'react';
-import BombCell from '@/components/BombCell';
-import SafeCell from '@/components/SafeCell';
+import { useEffect, useState } from 'react';
+import PresentationCell from '@/components/PresentationCell.tsx';
 import Cell from '@/Cell';
-import styled from 'styled-components';
-import { useBooleanState, useSetState } from '@/hooks';
+import { useSetState } from '@/hooks';
 import { GridType } from '@/types';
 import { range } from '@/utils';
 import { NeighborFinder } from '@/NeighborFinder';
 
-interface GridProps {
-  grid: GridType
-  bombs: number
-}
-
-const Wrapper = styled.div`
-  width: fit-content;
-  border-style: solid;
-  border-color: black;
-`;
-
-const CellRow = styled.div`
-  display: flex;
-`;
+type GridProps = { readonly grid: GridType; readonly bombs: number };
 
 export default function Grid({ grid: gridProp, bombs }: GridProps) {
-  const [isGameOver, finishTheGame, restartGame] = useBooleanState(false);
-  const [isFirstMove, setFirstMove] = useState(true);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [isFirstMove, setIsFirstMove] = useState(true);
   const markedCells = useSetState<string>();
   const revealedCells = useSetState<string>();
   const [grid, setGrid] = useState(gridProp);
 
+  const finishTheGame = (): void => {
+    markedCells.clear();
+    revealedCells.clear();
+    setIsGameOver(true);
+  };
+
   useEffect(() => {
     markedCells.clear();
     revealedCells.clear();
-    restartGame();
-    setFirstMove(true);
+    setIsGameOver(false);
+    setIsFirstMove(true);
     setGrid(gridProp);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gridProp]);
 
   return (
-    <Wrapper>
-      {grid.map((row, i) => (
-        <CellRow key={i}>
-          {row.map((cell) => {
+    <div className='w-fit border-black border-2'>
+      {grid.map((row) => (
+        <div className='flex' key={row.id}>
+          {row.cells.map((cell) => {
             const isMarked = markedCells.has(cell.id);
-            const isRevealed = revealedCells.has(cell.id);
-            if (cell.isBomb) {
-              if (isRevealed) {
-                revealBomb(cell);
-              }
-              return (
-                <BombCell
-                  key={cell.id}
-                  isRevealed={isGameOver}
-                  onClick={() => revealBomb(cell)}
-                  isMarked={isMarked}
-                  onContextMenu={(e) => mark(e, cell)}
-                />
-              );
-            }
             return (
-              <SafeCell
+              <PresentationCell
                 key={cell.id}
+                isBomb={cell.isBomb}
                 bombsCount={cell.getBombsCount()}
-                isRevealed={isGameOver || (!isMarked && revealedCells.has(cell.id))}
-                onClick={() => reveal(cell)}
                 isMarked={isMarked}
-                onContextMenu={(e) => mark(e, cell)}
+                isRevealed={
+                  isGameOver || (!isMarked && revealedCells.has(cell.id))
+                }
+                onMarkBomb={() => mark(cell)}
+                onReveal={() => {
+                  if (cell.isBomb) {
+                    if (markedCells.has(cell.id)) return;
+                    finishTheGame();
+                  } else {
+                    reveal(cell);
+                  }
+                }}
               />
             );
           })}
-        </CellRow>
+        </div>
       ))}
-    </Wrapper>
+    </div>
   );
 
   function reveal(cell: Cell): void {
     if (isFirstMove) {
       fillGamePieces(cell, grid, bombs);
-      setFirstMove(false);
+      setIsFirstMove(false);
     }
     if (markedCells.has(cell.id)) return;
     const neighborFinder = new NeighborFinder(markedCells.getCopy());
     const neighbors = neighborFinder.getNeighborsToReveal(cell);
-    revealedCells.add([cell.id, ...neighbors.map(({ id }) => id)]);
+    const newRevealedCells = [cell, ...neighbors];
+    const hasRevealedBomb = newRevealedCells.some(
+      (cell) => !markedCells.has(cell.id) && cell.isBomb,
+    );
+    if (hasRevealedBomb) {
+      finishTheGame();
+    } else {
+      revealedCells.add(newRevealedCells.map(({ id }) => id));
+    }
   }
 
-  function revealBomb(bomb: Cell, force: boolean = false): void {
-    if (markedCells.has(bomb.id) && !force) return;
-    markedCells.clear();
-    revealedCells.clear();
-    finishTheGame();
-  }
-
-  function mark(e: React.MouseEvent<HTMLSpanElement>, cell: Cell): void {
-    e.preventDefault();
+  function mark(cell: Cell): void {
     if (isGameOver) return;
     if (markedCells.has(cell.id)) {
       markedCells.remove([cell.id]);
@@ -106,8 +92,11 @@ export default function Grid({ grid: gridProp, bombs }: GridProps) {
 
   function fillGamePieces(origin: Cell, grid: GridType, bombs: number): void {
     const bombOptions = grid.reduce(
-      (options, row) => [...options, ...row.filter((cell) => !cell.isNeighborOf(origin))],
-      []
+      (output, row) => [
+        ...output,
+        ...row.cells.filter((cell) => !cell.isNeighborOf(origin)),
+      ],
+      [] as Cell[],
     );
     range(bombs).forEach(() => {
       const i = Math.floor(Math.random() * bombOptions.length);
@@ -116,7 +105,7 @@ export default function Grid({ grid: gridProp, bombs }: GridProps) {
     });
 
     grid.forEach((row) => {
-      row.forEach((cell) => {
+      row.cells.forEach((cell) => {
         cell.fillNeighbors(grid);
       });
     });

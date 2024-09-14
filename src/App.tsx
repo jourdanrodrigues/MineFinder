@@ -1,27 +1,10 @@
 import { useState } from 'react';
 import Cell from '@/Cell';
-import { range } from '@/utils';
+import { createUUID, range } from '@/utils';
 import { GridType } from '@/types';
 import Grid from '@/components/Grid';
 import { useInput } from '@/hooks';
-import styled from 'styled-components';
 import NumberInput from '@/components/Input';
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const Controls = styled.div`
-  width: 15rem;
-  height: 7rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  margin-top: 3rem;
-  margin-bottom: 3rem;
-`;
 
 function App() {
   const [grid, setGrid] = useState<GridType | null>(null);
@@ -30,15 +13,17 @@ function App() {
   const [rows, setRows] = useInput(10);
 
   return (
-    <Wrapper>
-      <Controls>
-        <NumberInput label="Bombs" onChange={setBombs} value={bombs}/>
-        <NumberInput label="Columns" onChange={setColumns} value={columns}/>
-        <NumberInput label="Rows" onChange={setRows} value={rows}/>
-        <button onClick={loadNewGame}>Start a new game</button>
-      </Controls>
-      {grid && <Grid grid={grid} bombs={+bombs}/>}
-    </Wrapper>
+    <div className='flex flex-col items-center'>
+      <div className='w-60 h-28 flex flex-col justify-between my-12'>
+        <NumberInput label='Bombs' onChange={setBombs} value={bombs} />
+        <NumberInput label='Columns' onChange={setColumns} value={columns} />
+        <NumberInput label='Rows' onChange={setRows} value={rows} />
+        <button onClick={loadNewGame} type='button'>
+          Start a new game
+        </button>
+      </div>
+      {grid ? <Grid bombs={+bombs} grid={grid} /> : null}
+    </div>
   );
 
   function loadNewGame() {
@@ -48,6 +33,12 @@ function App() {
 
 export default App;
 
-function buildGrid(rows: number, columns: number): GridType {
-  return range(rows).map((rowIndex) => range(columns).map((columnIndex) => new Cell(rowIndex, columnIndex)));
+function buildGrid(numRows: number, numColumns: number): GridType {
+  return range(numRows).map((rowIndex) => {
+    const rowId = createUUID();
+    const columns = range(numColumns).map(
+      (columnIndex) => new Cell(rowIndex, columnIndex),
+    );
+    return { id: rowId, cells: columns };
+  });
 }

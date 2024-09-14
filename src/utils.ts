@@ -1,3 +1,6 @@
+import clsx, { ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
 export function range(number: number): number[] {
   return Array.from(new Array(number).keys());
 }
@@ -25,4 +28,8 @@ export class SuperSet<T> extends Set<T> {
   intersection(other: Set<T> | SuperSet<T> | T[]): SuperSet<T> {
     return new SuperSet([...Array.from(this).filter((item) => new Set(other).has(item))]);
   }
+}
+
+export function cn(...classes: ClassValue[]): string {
+  return twMerge(clsx(...classes));
 }

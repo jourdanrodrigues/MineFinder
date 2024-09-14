@@ -44,20 +44,25 @@ export default class Cell {
   }
 
   fillNeighbors(grid: GridType): void {
-    for (let rowIndex = this.row - 1; rowIndex <= this.row + 1; rowIndex++) {
-      if (rowIndex < 0) continue;
-      if (rowIndex === grid.length) break;
-      const row = grid[rowIndex];
-      for (let columnIndex = this.column - 1; columnIndex <= this.column + 1; columnIndex++) {
-        if (columnIndex < 0 || (rowIndex === this.row && columnIndex === this.column)) continue;
-        if (columnIndex === row.length) break;
-        const neighbor = row[columnIndex];
-        if (neighbor.isBomb) {
-          this.bombs.add(neighbor);
-        } else {
-          this.nonBombs.add(neighbor);
-        }
+    const neighbors = [
+      { row: this.row - 1, column: this.column - 1 }, // top left
+      { row: this.row - 1, column: this.column }, // top
+      { row: this.row - 1, column: this.column + 1 }, // top right
+      { row: this.row, column: this.column - 1 }, // left
+      { row: this.row, column: this.column + 1 }, // right
+      { row: this.row + 1, column: this.column - 1 }, // bottom left
+      { row: this.row + 1, column: this.column }, // bottom
+      { row: this.row + 1, column: this.column + 1 }, // bottom right
+    ];
+
+    neighbors.forEach(({ row: i, column: j }) => {
+      const neighbor = grid[i]?.cells[j];
+      if (!neighbor) return;
+      if (neighbor.isBomb) {
+        this.bombs.add(neighbor);
+      } else {
+        this.nonBombs.add(neighbor);
       }
-    }
+    });
   }
 }

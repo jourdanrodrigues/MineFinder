@@ -10,11 +10,13 @@ describe('Cell.isNeighborOf', () => {
       new Cell(2, 0),
       new Cell(1, 2),
       new Cell(2, 1),
-      new Cell(2, 2)
+      new Cell(2, 2),
     ];
     const subject = new Cell(1, 1);
 
-    const output = Array.from(new Set(neighbors.map((neighbor) => neighbor.isNeighborOf(subject))));
+    const output = [
+      ...new Set(neighbors.map((neighbor) => neighbor.isNeighborOf(subject))),
+    ];
 
     expect(output).toEqual([true]);
   });
@@ -25,11 +27,13 @@ describe('Cell.isNeighborOf', () => {
       new Cell(4, 3),
       new Cell(6, 7),
       new Cell(7, 6),
-      new Cell(7, 7)
+      new Cell(7, 7),
     ];
     const subject = new Cell(5, 5);
 
-    const output = Array.from(new Set(neighbors.map((neighbor) => neighbor.isNeighborOf(subject))));
+    const output = [
+      ...new Set(neighbors.map((neighbor) => neighbor.isNeighborOf(subject))),
+    ];
 
     expect(output).toEqual([false]);
   });

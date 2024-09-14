@@ -1,4 +1,4 @@
 import Cell from '@/Cell';
 
-type RowType = Cell[]
-export type GridType = RowType[]
+type RowType = { id: string; cells: Cell[] };
+export type GridType = RowType[];
