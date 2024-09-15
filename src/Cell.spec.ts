@@ -1,6 +1,6 @@
-import Cell from '@/Cell';
+import Cell, { areNeighbors } from '@/Cell';
 
-describe('Cell.isNeighborOf', () => {
+describe('areNeighbors', () => {
   it('should return true if other is neighbor', () => {
     const neighbors = [
       new Cell(0, 0),
@@ -14,7 +14,7 @@ describe('Cell.isNeighborOf', () => {
     ];
     const subject = new Cell(1, 1);
 
-    expect(neighbors.every((neighbor) => neighbor.isNeighborOf(subject))).toBe(
+    expect(neighbors.every((neighbor) => areNeighbors(neighbor, subject))).toBe(
       true,
     );
   });
@@ -29,7 +29,7 @@ describe('Cell.isNeighborOf', () => {
     ];
     const subject = new Cell(5, 5);
 
-    expect(neighbors.every((neighbor) => neighbor.isNeighborOf(subject))).toBe(
+    expect(neighbors.every((neighbor) => areNeighbors(neighbor, subject))).toBe(
       false,
     );
   });

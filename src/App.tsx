@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Cell from '@/Cell';
-import { createUUID, range } from '@/utils';
+import { range } from '@/utils';
 import { GridType } from '@/types';
 import Grid from '@/components/Grid';
 import { useInput } from '@/hooks';
@@ -27,12 +27,9 @@ function App() {
   );
 
   function loadNewGame() {
-    const newGrid = range(+rows).map((rowIndex) => {
-      const rowId = createUUID();
-      const cells = range(+columns).map(
-        (columnIndex) => new Cell(rowIndex, columnIndex),
-      );
-      return { id: rowId, cells };
+    const newGrid = range(+rows).map((x) => {
+      const cells = range(+columns).map((y) => new Cell(x, y));
+      return { id: x.toString(), cells };
     });
     setGrid(newGrid);
   }

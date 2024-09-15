@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react';
 import PresentationCell from '@/components/PresentationCell.tsx';
-import Cell from '@/Cell';
+import Cell, { areNeighbors } from '@/Cell';
 import { useSetState } from '@/hooks';
 import { GridType } from '@/types';
 import { range } from '@/utils';
 import { NeighborFinder } from '@/NeighborFinder';
 
-type GridProps = { grid: GridType; bombs: number };
-
-export default function Grid({ grid: gridProp, bombs }: GridProps) {
+export default function Grid({
+  grid: gridProp,
+  bombs,
+}: {
+  grid: GridType;
+  bombs: number;
+}) {
   const [isGameOver, setIsGameOver] = useState(false);
   const [isFirstMove, setIsFirstMove] = useState(true);
   const markedCells = useSetState<string>();
@@ -93,7 +97,7 @@ export default function Grid({ grid: gridProp, bombs }: GridProps) {
     const bombOptions = grid.reduce(
       (output, row) => [
         ...output,
-        ...row.cells.filter((cell) => !cell.isNeighborOf(origin)),
+        ...row.cells.filter((cell) => !areNeighbors(cell, origin)),
       ],
       [] as Cell[],
     );

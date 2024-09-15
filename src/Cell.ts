@@ -1,30 +1,30 @@
-import { createUUID, SuperSet } from '@/utils';
+import { SuperSet } from '@/utils';
 import { GridType } from '@/types';
+
+export function areNeighbors(cellA: Cell, cellB: Cell): boolean {
+  return (
+    cellA.x >= cellB.x - 1 &&
+    cellA.x <= cellB.x + 1 &&
+    cellA.y >= cellB.y - 1 &&
+    cellA.y <= cellB.y + 1
+  );
+}
 
 export default class Cell {
   private readonly nonBombs: SuperSet<Cell>;
   private readonly bombs: SuperSet<Cell>;
-  column: number;
-  row: number;
+  y: number;
+  x: number;
   isBomb: boolean;
   id: string;
 
-  constructor(row: number, column: number) {
-    this.id = createUUID();
+  constructor(x: number, y: number) {
+    this.id = `${x}-${y}`;
     this.isBomb = false;
-    this.row = row;
-    this.column = column;
+    this.x = x;
+    this.y = y;
     this.nonBombs = new SuperSet();
     this.bombs = new SuperSet();
-  }
-
-  isNeighborOf(cell: Cell): boolean {
-    return (
-      this.row >= cell.row - 1 &&
-      this.row <= cell.row + 1 &&
-      this.column >= cell.column - 1 &&
-      this.column <= cell.column + 1
-    );
   }
 
   getBombsCount(): number {
@@ -36,7 +36,7 @@ export default class Cell {
   }
 
   getNeighbors(): Cell[] {
-    return [...Array.from(this.nonBombs), ...Array.from(this.bombs)];
+    return [...this.nonBombs, ...this.bombs];
   }
 
   getNeighborsIds(): SuperSet<string> {
@@ -45,18 +45,18 @@ export default class Cell {
 
   fillNeighbors(grid: GridType): void {
     const neighbors = [
-      { row: this.row - 1, column: this.column - 1 }, // top left
-      { row: this.row - 1, column: this.column }, // top
-      { row: this.row - 1, column: this.column + 1 }, // top right
-      { row: this.row, column: this.column - 1 }, // left
-      { row: this.row, column: this.column + 1 }, // right
-      { row: this.row + 1, column: this.column - 1 }, // bottom left
-      { row: this.row + 1, column: this.column }, // bottom
-      { row: this.row + 1, column: this.column + 1 }, // bottom right
+      { x: this.x - 1, y: this.y - 1 }, // top left
+      { x: this.x - 1, y: this.y }, // top
+      { x: this.x - 1, y: this.y + 1 }, // top right
+      { x: this.x, y: this.y - 1 }, // left
+      { x: this.x, y: this.y + 1 }, // right
+      { x: this.x + 1, y: this.y - 1 }, // bottom left
+      { x: this.x + 1, y: this.y }, // bottom
+      { x: this.x + 1, y: this.y + 1 }, // bottom right
     ];
 
-    neighbors.forEach(({ row: i, column: j }) => {
-      const neighbor = grid[i]?.cells[j];
+    neighbors.forEach(({ x, y }) => {
+      const neighbor = grid[x]?.cells[y];
       if (!neighbor) return;
       if (neighbor.isBomb) {
         this.bombs.add(neighbor);
