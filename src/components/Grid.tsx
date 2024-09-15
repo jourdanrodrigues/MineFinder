@@ -27,8 +27,7 @@ export default function Grid({ grid: gridProp, bombs }: GridProps) {
     setIsGameOver(false);
     setIsFirstMove(true);
     setGrid(gridProp);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gridProp]);
+  }, [gridProp]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className='w-fit border-black border-2'>
@@ -41,7 +40,7 @@ export default function Grid({ grid: gridProp, bombs }: GridProps) {
                 key={cell.id}
                 isBomb={cell.isBomb}
                 bombsCount={cell.getBombsCount()}
-                isMarked={isMarked}
+                isMarkedBomb={isMarked}
                 isRevealed={
                   isGameOver || (!isMarked && revealedCells.has(cell.id))
                 }

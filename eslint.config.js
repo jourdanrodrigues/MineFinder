@@ -261,6 +261,7 @@ export default tseslint.config(
       'yield-star-spacing': ['error', 'both'],
       yoda: ['error', 'never'],
 
+      'react/self-closing-comp': 'error',
       'react/jsx-no-bind': 'off',
       'react/jsx-no-literals': 'off',
       'react/jsx-newline': ['error', { prevent: true }],
