@@ -3,8 +3,8 @@ import { SuperSet } from '@/utils';
 
 interface SetState<T> {
   has: (item: T) => boolean;
-  add: (items: T[]) => void;
-  remove: (items: T[]) => void;
+  add: (items: T[] | SuperSet<T>) => void;
+  remove: (items: T[] | SuperSet<T>) => void;
   clear: () => void;
   getCopy: () => SuperSet<T>;
 }
@@ -15,15 +15,12 @@ export function useSetState<T>(): SetState<T> {
     () => ({
       getCopy: () => new SuperSet(object),
       has: (item) => object.has(item),
-      add: (items) =>
-        setObject((state) => new SuperSet([...Array.from(state), ...items])),
+      add: (items) => setObject((state) => new SuperSet([...state, ...items])),
       remove: (items) => {
         const setItems = new SuperSet(items);
         setObject(
           (state) =>
-            new SuperSet(
-              Array.from(state).filter((item) => !setItems.has(item)),
-            ),
+            new SuperSet([...state].filter((item) => !setItems.has(item))),
         );
       },
       clear: () => setObject(new SuperSet()),

@@ -14,9 +14,8 @@ export class NeighborFinder {
     if (this.idCache.has(cell.id) || this.hasUnmarkedBombs(cell)) return [];
     this.idCache.add(cell.id);
     return cell.getNeighbors().reduce((output, neighbor) => {
-      const innerNeighbors = neighbor.hasBombs()
-        ? []
-        : this.getNeighborsToReveal(neighbor);
+      const innerNeighbors =
+        neighbor.getBombsCount() > 0 ? [] : this.getNeighborsToReveal(neighbor);
       return [...output, neighbor, ...innerNeighbors];
     }, [] as Cell[]);
   }
@@ -25,9 +24,9 @@ export class NeighborFinder {
     if (cell.isBomb) return true;
     const bombsCount = cell.getBombsCount();
     if (bombsCount === 0) return false;
-    const markedNeighborsCount = cell
-      .getNeighborsIds()
-      .intersection(this.markedCells).size;
+    const markedNeighborsCount = this.markedCells.intersection(
+      cell.getNeighbors().map(({ id }) => id),
+    ).size;
     return markedNeighborsCount !== bombsCount;
   }
 }

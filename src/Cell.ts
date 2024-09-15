@@ -31,16 +31,8 @@ export default class Cell {
     return this.bombs.size;
   }
 
-  hasBombs(): boolean {
-    return this.bombs.size > 0;
-  }
-
   getNeighbors(): Cell[] {
     return [...this.nonBombs, ...this.bombs];
-  }
-
-  getNeighborsIds(): SuperSet<string> {
-    return new SuperSet(this.getNeighbors().map(({ id }) => id));
   }
 
   fillNeighbors(grid: GridType): void {

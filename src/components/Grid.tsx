@@ -3,7 +3,7 @@ import PresentationCell from '@/components/PresentationCell.tsx';
 import Cell, { areNeighbors } from '@/Cell';
 import { useSetState } from '@/hooks';
 import { GridType } from '@/types';
-import { range } from '@/utils';
+import { range, SuperSet } from '@/utils';
 import { NeighborFinder } from '@/NeighborFinder';
 
 export default function Grid({
@@ -50,8 +50,8 @@ export default function Grid({
                 }
                 onMarkBomb={() => mark(cell)}
                 onReveal={() => {
+                  if (markedCells.has(cell.id)) return;
                   if (cell.isBomb) {
-                    if (markedCells.has(cell.id)) return;
                     finishTheGame();
                   } else {
                     reveal(cell);
@@ -70,9 +70,10 @@ export default function Grid({
       fillGamePieces(cell, grid, bombs);
       setIsFirstMove(false);
     }
-    if (markedCells.has(cell.id)) return;
-    const neighborFinder = new NeighborFinder(markedCells.getCopy());
-    const neighbors = neighborFinder.getNeighborsToReveal(cell);
+    const markedCellSet = markedCells.getCopy();
+    const neighbors = new NeighborFinder(markedCellSet).getNeighborsToReveal(
+      cell,
+    );
     const newRevealedCells = [cell, ...neighbors];
     const hasRevealedBomb = newRevealedCells.some(
       (cell) => !markedCells.has(cell.id) && cell.isBomb,
@@ -80,7 +81,10 @@ export default function Grid({
     if (hasRevealedBomb) {
       finishTheGame();
     } else {
-      revealedCells.add(newRevealedCells.map(({ id }) => id));
+      const revealedCellsIds = new SuperSet(
+        newRevealedCells.map(({ id }) => id),
+      );
+      revealedCells.add(revealedCellsIds.difference(markedCellSet));
     }
   }
 
