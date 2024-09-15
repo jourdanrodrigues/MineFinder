@@ -11,16 +11,35 @@ export function Board({ grid, bombs }: { grid: GridType; bombs: number }) {
   const [translate, setTranslate] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
 
+  const contentRect = contentRef.current?.getBoundingClientRect();
+  const containerRect = containerRef.current?.getBoundingClientRect();
+
+  const shadowConfig = '1rem -1rem rgba(0, 0, 0, 0.5)';
+  const boxShadows = [];
+
+  if (contentRect?.top !== containerRect?.top) {
+    boxShadows.push(`inset 0 1rem ${shadowConfig}`);
+  }
+  if (contentRect?.left !== containerRect?.left) {
+    boxShadows.push(`inset 1rem 0 ${shadowConfig}`);
+  }
+  if (contentRect?.right !== containerRect?.right) {
+    boxShadows.push(`inset -1rem 0 ${shadowConfig}`);
+  }
+  if (contentRect?.bottom !== containerRect?.bottom) {
+    boxShadows.push(`inset 0 -1rem ${shadowConfig}`);
+  }
+
   return (
     <DraggingContext.Provider value={isDragging}>
       <div className='w-full flex justify-center items-center p-8'>
         <div
-          className={cn(
-            'max-w-full w-fit max-h-[45rem] flex justify-center border-black border-4 overflow-hidden items-center',
-            isDragging && 'cursor-all-scroll',
-          )}
           ref={containerRef}
           onMouseDown={handleMouseDown}
+          className={cn(
+            'max-w-full relative w-fit max-h-[45rem] flex justify-center overflow-hidden items-center',
+            isDragging && 'cursor-all-scroll',
+          )}
         >
           <Grid
             ref={contentRef}
@@ -28,6 +47,10 @@ export function Board({ grid, bombs }: { grid: GridType; bombs: number }) {
             grid={grid}
             className='transition-[translate]'
             style={{ translate: `${translate.x}px ${translate.y}px` }}
+          />
+          <div
+            className='transition-[box-shadow] absolute inset-0 pointer-events-none'
+            style={{ boxShadow: boxShadows.join(', ') }}
           />
         </div>
       </div>
