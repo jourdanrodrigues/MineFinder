@@ -20,7 +20,7 @@ export default function PresentationCell({
       className={cn(
         'flex justify-center items-center size-12 border-black border-2 transition-all',
         !isRevealed && 'cursor-pointer',
-        isRevealed && !isBomb && 'bg-gray-400',
+        isRevealed ? !isBomb && 'bg-gray-400' : 'hover:bg-gray-300',
       )}
       onContextMenu={(e) => e.preventDefault()}
       // TODO: Implement touch events
