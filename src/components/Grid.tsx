@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import PresentationCell from '@/components/PresentationCell.tsx';
 import Cell, { areNeighbors } from '@/Cell';
 import { useSetState } from '@/hooks';
@@ -6,13 +6,15 @@ import { GridType } from '@/types';
 import { range, SuperSet } from '@/utils';
 import { NeighborFinder } from '@/NeighborFinder';
 
-export default function Grid({
-  grid: gridProp,
-  bombs,
-}: {
-  grid: GridType;
-  bombs: number;
-}) {
+export default forwardRef<
+  HTMLDivElement | null,
+  {
+    grid: GridType;
+    bombs: number;
+    className?: string;
+    style?: React.CSSProperties;
+  }
+>(function Grid({ grid: gridProp, bombs, style }, ref) {
   const [isGameOver, setIsGameOver] = useState(false);
   const [isFirstMove, setIsFirstMove] = useState(true);
   const markedCells = useSetState<string>();
@@ -34,7 +36,7 @@ export default function Grid({
   }, [gridProp]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className='w-fit border-black border-2'>
+    <div className='w-fit' ref={ref} style={style}>
       {grid.map((row) => (
         <div className='flex' key={row.id}>
           {row.cells.map((cell) => {
@@ -118,4 +120,4 @@ export default function Grid({
     });
     setGrid(grid);
   }
-}
+});
