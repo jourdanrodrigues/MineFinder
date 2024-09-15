@@ -1,4 +1,6 @@
 import { cn, getMouseButtonClicked } from '@/utils.ts';
+import { useContext } from 'react';
+import { DraggingContext } from '@/components/Board.tsx';
 
 export default function PresentationCell({
   isBomb,
@@ -15,19 +17,24 @@ export default function PresentationCell({
   onReveal: () => void;
   onMarkBomb: () => void;
 }) {
+  const isDragging = useContext(DraggingContext);
   return (
     <span
       className={cn(
         'flex justify-center items-center size-12 border-black border-2 transition-all',
-        !isRevealed && 'cursor-pointer',
+        !isRevealed && !isDragging && 'cursor-pointer',
         !isRevealed && !isMarkedBomb && 'hover:bg-gray-300',
         isRevealed && !isBomb && 'bg-gray-400',
       )}
       onContextMenu={(e) => e.preventDefault()}
       // TODO: Implement touch events
       onMouseDown={(e) => {
+        console.log(e);
         const button = getMouseButtonClicked(e);
-        if (button === 'left' || button === 'middle') {
+        if (button !== 'left' && button !== 'right') return;
+
+        e.stopPropagation();
+        if (button === 'left') {
           onReveal();
         } else if (button === 'right') {
           onMarkBomb();
@@ -53,6 +60,7 @@ function Content({
   isBomb: boolean;
   bombsCount: number;
 }) {
+  const isDragging = useContext(DraggingContext);
   if (isBomb) {
     return (
       <span
@@ -63,7 +71,12 @@ function Content({
     );
   }
   return (
-    <span className='text-center leading-[100%] text-3xl size-8 select-none cursor-default'>
+    <span
+      className={cn(
+        'text-center leading-[100%] text-3xl size-8 select-none',
+        !isDragging && 'cursor-default',
+      )}
+    >
       {bombsCount > 0 ? bombsCount : ''}
     </span>
   );

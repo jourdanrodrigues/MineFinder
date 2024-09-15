@@ -2,9 +2,9 @@ import { useState } from 'react';
 import Cell from '@/Cell';
 import { range } from '@/utils';
 import { GridType } from '@/types';
-import Grid from '@/components/Grid';
-import { useFocusableContent, useInput } from '@/hooks';
+import { useInput } from '@/hooks';
 import NumberInput from '@/components/Input';
+import { Board } from '@/components/Board.tsx';
 
 const DEFAULT_COLUMNS = 10;
 const DEFAULT_ROWS = 10;
@@ -19,7 +19,6 @@ function App() {
   const [bombs, setBombs] = useInput(DEFAULT_BOMBS);
   const [columns, setColumns] = useInput(DEFAULT_COLUMNS);
   const [rows, setRows] = useInput(DEFAULT_ROWS);
-  const { containerProps, contentProps } = useFocusableContent();
 
   return (
     <div className='flex flex-col items-center'>
@@ -34,19 +33,7 @@ function App() {
           Start a new game
         </button>
       </div>
-      <div className='w-full flex justify-center items-center p-8'>
-        <div
-          className='max-w-full w-fit max-h-[45rem] flex justify-center border-black border-4 overflow-hidden items-center'
-          {...containerProps}
-        >
-          <Grid
-            bombs={+bombs}
-            grid={grid}
-            className='transition-[translate]'
-            {...contentProps}
-          />
-        </div>
-      </div>
+      <Board grid={grid} bombs={+bombs} />
     </div>
   );
 }

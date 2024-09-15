@@ -31,7 +31,7 @@ export function cn(...classes: ClassValue[]): string {
 export function getMouseButtonClicked(
   e: React.MouseEvent,
 ): 'left' | 'middle' | 'right' {
-  // event.button === 0  left, event.button === 1 middle, event.button === 2  right
+  if (e.button === 0 && e.metaKey) return 'middle'; // Cmd + left
   if (e.button === 0) return 'left';
   if (e.button === 1) return 'middle';
   if (e.button === 2) return 'right';
