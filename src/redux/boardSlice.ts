@@ -41,23 +41,17 @@ export const boardSlice = createSlice({
   name: 'counter',
   initialState,
   reducers: {
-    setBombCount: (state, { payload: bombCount }: PayloadAction<number>) => {
-      state.bombCount = bombCount;
-    },
-    setColumnCount: (
+    startNewGame: (
       state,
-      { payload: columnCount }: PayloadAction<number>,
+      action: PayloadAction<{ bombs: number; rows: number; columns: number }>,
     ) => {
-      state.columnCount = columnCount;
-    },
-    setRowCount: (state, { payload: rowCount }: PayloadAction<number>) => {
-      state.rowCount = rowCount;
-    },
-    startNewGame: (state) => {
       state.flagged = [];
       state.revealed = [];
       state.bombs = [];
       state.cellNeighborBombs = {};
+      state.bombCount = action.payload.bombs;
+      state.rowCount = action.payload.rows;
+      state.columnCount = action.payload.columns;
       state.isGameOver = false;
     },
     finishGame: (state) => {
@@ -86,17 +80,19 @@ export const boardSlice = createSlice({
       if (flagged.has(cellId)) return;
 
       const bombs = new Set(state.bombs);
-      if (bombs.has(cellId)) {
+
+      const newRevealed = state.revealed
+        .concat([cellId, ...findNeighborsToReveal(new Set(), cell)])
+        .filter((cellId) => !flagged.has(cellId));
+
+      if (newRevealed.some((cellId) => bombs.has(cellId))) {
         state.flagged = [];
         state.revealed = [];
         state.isGameOver = true;
         return;
       }
 
-      state.revealed = state.revealed.concat([
-        cellId,
-        ...findNeighborsToReveal(new Set(), cell),
-      ]);
+      state.revealed = newRevealed;
 
       function findNeighborsToReveal(
         output: Set<string>,
