@@ -4,6 +4,10 @@ import { areNeighbors, range } from '@/utils.ts';
 
 type Cell = { x: number; y: number };
 
+export const DEFAULT_BOMBS = 20;
+export const DEFAULT_COLUMNS = 10;
+export const DEFAULT_ROWS = 10;
+
 export const selectBoardSets = createSelector(
   [
     (state: RootState) => state.board.flagged,
@@ -28,9 +32,9 @@ const initialState: {
   cellNeighborBombs: Record<string, string[] | undefined>;
 } = {
   isGameOver: false,
-  bombCount: 20,
-  columnCount: 10,
-  rowCount: 10,
+  bombCount: DEFAULT_BOMBS,
+  columnCount: DEFAULT_COLUMNS,
+  rowCount: DEFAULT_ROWS,
   flagged: [],
   bombs: [],
   revealed: [],

@@ -1,12 +1,17 @@
 import { NumberInput } from '@/components/Input.tsx';
 import { useAppDispatch } from '@/redux/hooks.ts';
-import { boardSlice } from '@/redux/boardSlice.ts';
+import {
+  boardSlice,
+  DEFAULT_BOMBS,
+  DEFAULT_COLUMNS,
+  DEFAULT_ROWS,
+} from '@/redux/boardSlice.ts';
 import { useState } from 'react';
 
 export function Controls() {
-  const [bombs, setBombs] = useState(20);
-  const [columns, setColumns] = useState(10);
-  const [rows, setRows] = useState(10);
+  const [bombs, setBombs] = useState(DEFAULT_BOMBS);
+  const [columns, setColumns] = useState(DEFAULT_COLUMNS);
+  const [rows, setRows] = useState(DEFAULT_ROWS);
   const dispatch = useAppDispatch();
 
   return (
