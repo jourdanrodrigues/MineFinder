@@ -1,11 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { cn, getMouseButtonClicked } from '@/utils';
-import { GridType } from '@/types';
-import Grid from '@/components/Grid';
+import { Grid } from '@/components/Grid';
 
 export const DraggingContext = React.createContext(false);
 
-export function Board({ grid, bombs }: { grid: GridType; bombs: number }) {
+export function Board() {
   const contentRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [translate, setTranslate] = useState({ x: 0, y: 0 });
@@ -32,7 +31,7 @@ export function Board({ grid, bombs }: { grid: GridType; bombs: number }) {
 
   return (
     <DraggingContext.Provider value={isDragging}>
-      <div className='w-full flex justify-center items-center p-8'>
+      <div className='flex w-full items-center justify-center p-8'>
         <div
           ref={containerRef}
           onMouseDown={handleMouseDown}
@@ -43,13 +42,11 @@ export function Board({ grid, bombs }: { grid: GridType; bombs: number }) {
         >
           <Grid
             ref={contentRef}
-            bombs={bombs}
-            grid={grid}
             className='transition-[translate]'
             style={{ translate: `${translate.x}px ${translate.y}px` }}
           />
           <div
-            className='transition-[box-shadow] absolute inset-0 pointer-events-none'
+            className='pointer-events-none absolute inset-0 transition-[box-shadow]'
             style={{ boxShadow: boxShadows.join(', ') }}
           />
         </div>

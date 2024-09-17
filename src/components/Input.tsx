@@ -6,13 +6,9 @@ type NumberInputProps = {
   onChange: React.ChangeEventHandler<HTMLInputElement>;
 };
 
-export default function NumberInput({
-  label,
-  value,
-  onChange,
-}: NumberInputProps) {
+export function NumberInput({ label, value, onChange }: NumberInputProps) {
   return (
-    <div className='w-full flex justify-between'>
+    <div className='flex w-full justify-between'>
       <span className='w-1/3'>{label}:</span>
       <input
         className='w-2/3'

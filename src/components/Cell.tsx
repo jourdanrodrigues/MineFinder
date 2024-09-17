@@ -1,21 +1,21 @@
-import { cn, getMouseButtonClicked } from '@/utils.ts';
+import { cn, getMouseButtonClicked } from '@/utils';
 import { useContext } from 'react';
-import { DraggingContext } from '@/components/Board.tsx';
+import { DraggingContext } from '@/components/Board';
 
-export default function PresentationCell({
+export function Cell({
   isBomb,
   isRevealed,
-  isMarkedBomb,
+  isFlagged,
   bombsCount,
   onReveal,
-  onMarkBomb,
+  onFlag,
 }: {
   isRevealed: boolean;
-  isMarkedBomb: boolean;
+  isFlagged: boolean;
   isBomb: boolean;
   bombsCount: number;
   onReveal: () => void;
-  onMarkBomb: () => void;
+  onFlag: () => void;
 }) {
   const isDragging = useContext(DraggingContext);
   return (
@@ -23,13 +23,12 @@ export default function PresentationCell({
       className={cn(
         'flex justify-center items-center size-12 border-black border-2 transition-all',
         !isRevealed && !isDragging && 'cursor-pointer',
-        !isRevealed && !isMarkedBomb && 'hover:bg-gray-200',
+        !isRevealed && !isFlagged && 'hover:bg-gray-200',
         isRevealed && !isBomb && 'bg-green-100',
       )}
       onContextMenu={(e) => e.preventDefault()}
       // TODO: Implement touch events
       onMouseDown={(e) => {
-        console.log(e);
         const button = getMouseButtonClicked(e);
         if (button !== 'left' && button !== 'right') return;
 
@@ -37,16 +36,16 @@ export default function PresentationCell({
         if (button === 'left') {
           onReveal();
         } else if (button === 'right') {
-          onMarkBomb();
+          onFlag();
         }
       }}
     >
       <BombFlag
         className={cn('absolute transition-opacity opacity-100', {
-          'opacity-0': !isMarkedBomb,
+          'opacity-0': !isFlagged,
         })}
       />
-      {!isMarkedBomb && isRevealed && (
+      {!isFlagged && isRevealed && (
         <Content isBomb={isBomb} bombsCount={bombsCount} />
       )}
     </span>
@@ -63,11 +62,7 @@ function Content({
   const isDragging = useContext(DraggingContext);
   if (isBomb) {
     return (
-      <span
-        className={
-          'block relative rounded-[50%] transition-all size-8 border-black border-2'
-        }
-      />
+      <span className='relative block size-8 rounded-[50%] border-2 border-black transition-all' />
     );
   }
   return (
@@ -93,7 +88,7 @@ function BombFlag({ className }: { className?: string }) {
     >
       <div className='h-4 w-1 bg-black' />
       <div
-        className='absolute top-0 size-0 border-r-red-500 border-r-[1rem]'
+        className='absolute top-0 size-0 border-r-[1rem] border-r-red-500'
         style={{
           right: 'calc(50% - 0.125rem)',
           borderBlock: '0.4rem solid transparent',
@@ -101,7 +96,7 @@ function BombFlag({ className }: { className?: string }) {
         }}
       />
       <div
-        className='relative w-6 h-1 bg-black'
+        className='relative h-1 w-6 bg-black'
         style={{ clipPath: 'polygon(25% 0%, 75% 0%, 100% 100%, 0% 100%)' }}
       />
     </div>

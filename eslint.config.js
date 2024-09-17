@@ -5,6 +5,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 import prettier from 'eslint-plugin-prettier';
+import tailwindcss from 'eslint-plugin-tailwindcss';
 
 export default tseslint.config(
   { ignores: ['dist'] },
@@ -19,6 +20,7 @@ export default tseslint.config(
     plugins: {
       react,
       prettier,
+      tailwindcss,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
     },
@@ -187,10 +189,6 @@ export default tseslint.config(
           vars: 'all',
         },
       ],
-      '@typescript-eslint/no-use-before-define': [
-        'error',
-        { functions: false },
-      ],
       'no-useless-call': 'error',
       'no-useless-computed-key': 'error',
       'no-useless-constructor': 'error',
@@ -261,6 +259,23 @@ export default tseslint.config(
       'yield-star-spacing': ['error', 'both'],
       yoda: ['error', 'never'],
 
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          name: 'react-redux',
+          importNames: ['useSelector', 'useDispatch'],
+          message:
+            'Use typed hooks `useAppDispatch` and `useAppSelector` instead.',
+        },
+      ],
+      '@typescript-eslint/no-use-before-define': [
+        'error',
+        { functions: false },
+      ],
+
+      'tailwindcss/classnames-order': 'error',
+
+      'react/jsx-curly-brace-presence': 'error',
       'react/self-closing-comp': 'error',
       'react/jsx-no-bind': 'off',
       'react/jsx-no-literals': 'off',

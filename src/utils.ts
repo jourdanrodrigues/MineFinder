@@ -6,24 +6,6 @@ export function range(number: number): number[] {
   return Array.from(new Array(number).keys());
 }
 
-export class SuperSet<T> extends Set<T> {
-  difference(other: Set<T> | SuperSet<T> | T[]): SuperSet<T> {
-    return new SuperSet([
-      ...Array.from(this).filter((item) => !new Set(other).has(item)),
-    ]);
-  }
-
-  union(other: Set<T> | SuperSet<T> | T[]): SuperSet<T> {
-    return new SuperSet([...Array.from(this), ...Array.from(other)]);
-  }
-
-  intersection(other: Set<T> | SuperSet<T> | T[]): SuperSet<T> {
-    return new SuperSet([
-      ...Array.from(this).filter((item) => new Set(other).has(item)),
-    ]);
-  }
-}
-
 export function cn(...classes: ClassValue[]): string {
   return twMerge(clsx(...classes));
 }
@@ -36,4 +18,16 @@ export function getMouseButtonClicked(
   if (e.button === 1) return 'middle';
   if (e.button === 2) return 'right';
   return 'left';
+}
+
+export function areNeighbors(
+  cellA: { x: number; y: number },
+  cellB: { x: number; y: number },
+): boolean {
+  return (
+    cellA.x >= cellB.x - 1 &&
+    cellA.x <= cellB.x + 1 &&
+    cellA.y >= cellB.y - 1 &&
+    cellA.y <= cellB.y + 1
+  );
 }
