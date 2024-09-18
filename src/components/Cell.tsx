@@ -1,5 +1,5 @@
 import { cn, getMouseButtonClicked } from '@/utils';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 export function Cell({
   isBomb,
@@ -18,77 +18,82 @@ export function Cell({
 }) {
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
+  const absoluteCenterClassName =
+    'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 will-change-[opacity]';
   return (
     <div
       className={cn(
-        'flex justify-center items-center transition-all bg-white aspect-square size-full',
-        !isRevealed && 'cursor-pointer',
+        'flex relative justify-center items-center transition-all bg-white aspect-square size-full',
+        !isRevealed && !isFlagged ? 'cursor-pointer' : 'cursor-default',
         !isRevealed && !isFlagged && 'hover:bg-gray-200',
         isRevealed && !isBomb && 'bg-green-100',
       )}
       onContextMenu={(e) => e.preventDefault()}
-      onTouchStart={(e) => {
-        e.preventDefault();
-        const timeoutId = setTimeout(() => {
-          onFlag();
-          setTimeoutId(null);
-        }, 300);
-
-        setTimeoutId(timeoutId);
-      }}
-      onTouchMove={() => {
-        if (!timeoutId) return;
-        clearTimeout(timeoutId);
-        setTimeoutId(null);
-      }}
-      onTouchEnd={(e) => {
-        e.preventDefault();
-        if (!timeoutId) return;
-        onReveal();
-        clearTimeout(timeoutId);
-        setTimeoutId(null);
-      }}
-      onMouseDown={(e) => {
-        const button = getMouseButtonClicked(e);
-        if (button !== 'left' && button !== 'right') return;
-
-        e.stopPropagation();
-        if (button === 'left') {
-          onReveal();
-        } else if (button === 'right') {
-          onFlag();
-        }
-      }}
+      onTouchStart={startTouching}
+      onTouchMove={cancelTimeout}
+      onTouchEnd={stopTouching}
+      onMouseDown={handleClick}
     >
-      <BombFlag
-        className={cn('absolute transition-opacity opacity-100', {
-          'opacity-0': !isFlagged,
-        })}
+      <span
+        className={cn(
+          'block size-[80%] rounded-[50%] border-2 border-black transition-all',
+          !isFlagged && isBomb && isRevealed ? 'opacity-100' : 'opacity-0',
+          absoluteCenterClassName,
+        )}
       />
-      {!isFlagged && isRevealed && (
-        <Content isBomb={isBomb} bombsCount={bombsCount} />
-      )}
+      <BombFlag
+        className={cn(
+          'transition-opacity',
+          isFlagged ? 'opacity-100' : 'opacity-0',
+          absoluteCenterClassName,
+        )}
+      />
+      <span
+        className={cn(
+          'block transition-opacity text-center text-3xl leading-[100%]',
+          !isFlagged && !isBomb && isRevealed ? 'opacity-100' : 'opacity-0',
+          absoluteCenterClassName,
+        )}
+      >
+        {bombsCount > 0 ? bombsCount : ''}
+      </span>
     </div>
   );
-}
 
-function Content({
-  isBomb,
-  bombsCount,
-}: {
-  isBomb: boolean;
-  bombsCount: number;
-}) {
-  if (isBomb) {
-    return (
-      <span className='relative block size-[80%] rounded-[50%] border-2 border-black transition-all' />
-    );
+  function handleClick(e: React.MouseEvent) {
+    const button = getMouseButtonClicked(e);
+    if (button !== 'left' && button !== 'right') return;
+
+    e.stopPropagation();
+    if (button === 'left') {
+      onReveal();
+    } else if (button === 'right') {
+      onFlag();
+    }
   }
-  return (
-    <span className='cursor-default select-none text-center text-3xl leading-[100%]'>
-      {bombsCount > 0 ? bombsCount : ''}
-    </span>
-  );
+
+  function startTouching(e: React.TouchEvent) {
+    e.preventDefault();
+    const timeoutId = setTimeout(() => {
+      onFlag();
+      setTimeoutId(null);
+    }, 300);
+
+    setTimeoutId(timeoutId);
+  }
+
+  function stopTouching(e: React.TouchEvent) {
+    e.preventDefault();
+    if (!timeoutId) return;
+    onReveal();
+    cancelTimeout();
+  }
+
+  function cancelTimeout() {
+    if (!timeoutId) return;
+    clearTimeout(timeoutId);
+    setTimeoutId(null);
+  }
 }
 
 function BombFlag({ className }: { className?: string }) {
