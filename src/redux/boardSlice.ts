@@ -84,10 +84,13 @@ export const boardSlice = createSlice({
       if (flagged.has(cellId)) return;
 
       const bombs = new Set(state.bombs);
+      const revealed = new Set(state.revealed);
 
+      const now = Date.now();
       const newRevealed = state.revealed
         .concat([cellId, ...findNeighborsToReveal(new Set(), cell)])
         .filter((cellId) => !flagged.has(cellId));
+      console.log('reveal', Date.now() - now);
 
       if (newRevealed.some((cellId) => bombs.has(cellId))) {
         state.flagged = [];
@@ -105,7 +108,10 @@ export const boardSlice = createSlice({
         const cellId = `${x}-${y}`;
         if (output.has(cellId)) return output;
 
-        const neighbors = getNeighbors({ x, y }, state);
+        const neighbors = getNeighbors({ x, y }).filter(
+          // Walking over neighbors already revealed can impact performance.
+          ({ x, y }) => !revealed.has(`${x}-${y}`),
+        );
         if (hasUnmarkedBombs(cellId, neighbors)) return output;
 
         return neighbors.reduce(
@@ -157,7 +163,7 @@ export const boardSlice = createSlice({
         state.cellNeighborBombs = state.bombs.reduce(
           (output, bomb) => {
             const [x, y] = bomb.split('-').map(Number);
-            return getNeighbors({ x, y }, state).reduce((output, { x, y }) => {
+            return getNeighbors({ x, y }).reduce((output, { x, y }) => {
               const cellId = `${x}-${y}`;
               const currentBombs = output[cellId] || [];
               return { ...output, [cellId]: [...currentBombs, bomb] };
@@ -166,28 +172,26 @@ export const boardSlice = createSlice({
           {} as Record<string, string[]>,
         );
       }
+
+      function getNeighbors(cell: Cell): Cell[] {
+        return [
+          { x: cell.x - 1, y: cell.y - 1 }, // top left
+          { x: cell.x - 1, y: cell.y }, // top
+          { x: cell.x - 1, y: cell.y + 1 }, // top right
+          { x: cell.x, y: cell.y - 1 }, // left
+          { x: cell.x, y: cell.y + 1 }, // right
+          { x: cell.x + 1, y: cell.y - 1 }, // bottom left
+          { x: cell.x + 1, y: cell.y }, // bottom
+          { x: cell.x + 1, y: cell.y + 1 }, // bottom right
+        ].filter(
+          ({ x, y }) =>
+            isBetween(x, 0, state.rowCount - 1) &&
+            isBetween(y, 0, state.columnCount - 1),
+        );
+      }
     },
   },
 });
-
-function getNeighbors(
-  cell: Cell,
-  { rowCount, columnCount }: { rowCount: number; columnCount: number },
-): Cell[] {
-  return [
-    { x: cell.x - 1, y: cell.y - 1 }, // top left
-    { x: cell.x - 1, y: cell.y }, // top
-    { x: cell.x - 1, y: cell.y + 1 }, // top right
-    { x: cell.x, y: cell.y - 1 }, // left
-    { x: cell.x, y: cell.y + 1 }, // right
-    { x: cell.x + 1, y: cell.y - 1 }, // bottom left
-    { x: cell.x + 1, y: cell.y }, // bottom
-    { x: cell.x + 1, y: cell.y + 1 }, // bottom right
-  ].filter(
-    ({ x, y }) =>
-      isBetween(x, 0, rowCount - 1) && isBetween(y, 0, columnCount - 1),
-  );
-}
 
 function isBetween(value: number, begin: number, end: number): boolean {
   return value >= begin && value <= end;
