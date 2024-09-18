@@ -1,23 +1,25 @@
-import React, { forwardRef } from 'react';
 import { Cell } from '@/components/Cell.tsx';
-import { range } from '@/utils';
+import { cn, range } from '@/utils';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks.ts';
 import { boardSlice, selectBoardSets } from '@/redux/boardSlice.ts';
 
-export const Grid = forwardRef<
-  HTMLDivElement | null,
-  { className?: string; style?: React.CSSProperties }
->(({ style }, ref) => {
+export const Grid = ({ className }: { className?: string }) => {
   const dispatch = useAppDispatch();
   const { flagged, bombs, revealed } = useAppSelector(selectBoardSets);
   const { isGameOver, rowCount, columnCount, cellNeighborBombs } =
     useAppSelector((state) => state.board);
 
   return (
-    <div className='w-fit' ref={ref} style={style}>
-      {range(rowCount).map((row) => (
-        <div className='flex' key={row.toString()}>
-          {range(columnCount).map((column) => {
+    <div className={cn('flex justify-center items-center', className)}>
+      <div
+        className='grid size-fit select-none gap-[2px] border-[2px] border-black bg-black'
+        style={{
+          gridTemplateRows: `repeat(${rowCount}, 2rem)`,
+          gridTemplateColumns: `repeat(${columnCount}, 2rem)`,
+        }}
+      >
+        {range(rowCount).map((row) =>
+          range(columnCount).map((column) => {
             const cell = { x: row, y: column };
             const cellId = `${row}-${column}`;
             const isFlagged = flagged.has(cellId);
@@ -41,9 +43,9 @@ export const Grid = forwardRef<
                 }}
               />
             );
-          })}
-        </div>
-      ))}
+          }),
+        )}
+      </div>
     </div>
   );
-});
+};

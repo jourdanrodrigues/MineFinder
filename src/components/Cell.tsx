@@ -1,6 +1,5 @@
 import { cn, getMouseButtonClicked } from '@/utils';
-import { useContext } from 'react';
-import { DraggingContext } from '@/components/Board';
+import { useState } from 'react';
 
 export function Cell({
   isBomb,
@@ -17,17 +16,38 @@ export function Cell({
   onReveal: () => void;
   onFlag: () => void;
 }) {
-  const isDragging = useContext(DraggingContext);
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+
   return (
-    <span
+    <div
       className={cn(
-        'flex justify-center items-center size-12 border-black border-2 transition-all',
-        !isRevealed && !isDragging && 'cursor-pointer',
+        'flex justify-center items-center transition-all bg-white aspect-square size-full',
+        !isRevealed && 'cursor-pointer',
         !isRevealed && !isFlagged && 'hover:bg-gray-200',
         isRevealed && !isBomb && 'bg-green-100',
       )}
       onContextMenu={(e) => e.preventDefault()}
-      // TODO: Implement touch events
+      onTouchStart={(e) => {
+        e.preventDefault();
+        const timeoutId = setTimeout(() => {
+          onFlag();
+          setTimeoutId(null);
+        }, 300);
+
+        setTimeoutId(timeoutId);
+      }}
+      onTouchMove={() => {
+        if (!timeoutId) return;
+        clearTimeout(timeoutId);
+        setTimeoutId(null);
+      }}
+      onTouchEnd={(e) => {
+        e.preventDefault();
+        if (!timeoutId) return;
+        onReveal();
+        clearTimeout(timeoutId);
+        setTimeoutId(null);
+      }}
       onMouseDown={(e) => {
         const button = getMouseButtonClicked(e);
         if (button !== 'left' && button !== 'right') return;
@@ -48,7 +68,7 @@ export function Cell({
       {!isFlagged && isRevealed && (
         <Content isBomb={isBomb} bombsCount={bombsCount} />
       )}
-    </span>
+    </div>
   );
 }
 
@@ -59,19 +79,13 @@ function Content({
   isBomb: boolean;
   bombsCount: number;
 }) {
-  const isDragging = useContext(DraggingContext);
   if (isBomb) {
     return (
-      <span className='relative block size-8 rounded-[50%] border-2 border-black transition-all' />
+      <span className='relative block size-[80%] rounded-[50%] border-2 border-black transition-all' />
     );
   }
   return (
-    <span
-      className={cn(
-        'text-center leading-[100%] text-3xl size-8 select-none',
-        !isDragging && 'cursor-default',
-      )}
-    >
+    <span className='cursor-default select-none text-center text-3xl leading-[100%]'>
       {bombsCount > 0 ? bombsCount : ''}
     </span>
   );

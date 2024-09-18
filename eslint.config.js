@@ -15,7 +15,12 @@ export default tseslint.config(
     languageOptions: {
       ...react.configs.flat.recommended.languageOptions,
       ecmaVersion: 2020,
-      globals: { ...globals.browser, ...globals.jest, ...globals.node },
+      globals: {
+        ...globals.browser,
+        ...globals.jest,
+        ...globals.node,
+        NodeJS: 'readonly',
+      },
     },
     plugins: {
       react,
