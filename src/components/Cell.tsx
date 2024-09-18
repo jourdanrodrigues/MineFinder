@@ -97,6 +97,27 @@ export function Cell({
 }
 
 function BombFlag({ className }: { className?: string }) {
+  // Tailwind has the values we need here (e.g. h-4 === h-[1rem]) but we opted
+  // out because flag positioning needs to use "calc" with a specific the
+  // value used that wouldn't be obvious.
+
+  const pole = <div className='h-[1rem] w-[0.25rem] bg-black' />;
+  const base = (
+    <div
+      className='relative h-[0.25rem] w-[1.5rem] bg-black'
+      style={{ clipPath: 'polygon(25% 0%, 75% 0%, 100% 100%, 0% 100%)' }}
+    />
+  );
+  const flag = (
+    <div
+      className='absolute top-0 size-0 border-r-[1rem] border-r-red-500'
+      style={{
+        right: 'calc(50% - 0.125rem)',
+        borderBlock: '0.4rem solid transparent',
+        translate: '0 -2px',
+      }}
+    />
+  );
   return (
     <div
       className={cn(
@@ -105,19 +126,9 @@ function BombFlag({ className }: { className?: string }) {
       )}
       style={{ translate: '0 1px' }}
     >
-      <div className='h-4 w-1 bg-black' />
-      <div
-        className='absolute top-0 size-0 border-r-[1rem] border-r-red-500'
-        style={{
-          right: 'calc(50% - 0.125rem)',
-          borderBlock: '0.4rem solid transparent',
-          translate: '0 -2px',
-        }}
-      />
-      <div
-        className='relative h-1 w-6 bg-black'
-        style={{ clipPath: 'polygon(25% 0%, 75% 0%, 100% 100%, 0% 100%)' }}
-      />
+      {pole}
+      {flag}
+      {base}
     </div>
   );
 }
