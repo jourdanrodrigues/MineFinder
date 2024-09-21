@@ -1,5 +1,6 @@
 import { cn, getMouseButtonClicked } from '@/utils';
 import React, { useState } from 'react';
+import { BombFlag } from '@/components/BombFlag.tsx';
 
 export function Cell({
   isBomb,
@@ -24,9 +25,13 @@ export function Cell({
     <div
       className={cn(
         'flex relative justify-center items-center transition-all bg-white aspect-square size-full',
-        !isRevealed && !isFlagged ? 'cursor-pointer' : 'cursor-default',
-        !isRevealed && !isFlagged && 'hover:bg-gray-200',
-        isRevealed && !isBomb && 'bg-green-100',
+        !isRevealed ? 'cursor-pointer' : 'cursor-default',
+        {
+          'hover:bg-gray-200': !isRevealed && !isFlagged,
+          'bg-red-100': isRevealed && isBomb,
+          'bg-green-100': isRevealed && !isBomb,
+          'bg-yellow-100': isFlagged,
+        },
       )}
       onContextMenu={(e) => e.preventDefault()}
       onTouchStart={startTouching}
@@ -43,14 +48,14 @@ export function Cell({
       />
       <BombFlag
         className={cn(
-          'transition-opacity',
+          'transition-opacity size-5',
           isFlagged ? 'opacity-100' : 'opacity-0',
           absoluteCenterClassName,
         )}
       />
       <span
         className={cn(
-          'block transition-opacity text-center text-3xl leading-[100%]',
+          'block transition-opacity text-center text-xl leading-[100%]',
           !isFlagged && !isBomb && isRevealed ? 'opacity-100' : 'opacity-0',
           absoluteCenterClassName,
         )}
@@ -94,41 +99,4 @@ export function Cell({
     clearTimeout(timeoutId);
     setTimeoutId(null);
   }
-}
-
-function BombFlag({ className }: { className?: string }) {
-  // Tailwind has the values we need here (e.g. h-4 === h-[1rem]) but we opted
-  // out because flag positioning needs to use "calc" with a specific the
-  // value used that wouldn't be obvious.
-
-  const pole = <div className='h-[1rem] w-[0.25rem] bg-black' />;
-  const base = (
-    <div
-      className='relative h-[0.25rem] w-[1.5rem] bg-black'
-      style={{ clipPath: 'polygon(25% 0%, 75% 0%, 100% 100%, 0% 100%)' }}
-    />
-  );
-  const flag = (
-    <div
-      className='absolute top-0 size-0 border-r-[1rem] border-r-red-500'
-      style={{
-        right: 'calc(50% - 0.125rem)',
-        borderBlock: '0.4rem solid transparent',
-        translate: '0 -2px',
-      }}
-    />
-  );
-  return (
-    <div
-      className={cn(
-        'flex relative flex-col justify-center items-center',
-        className,
-      )}
-      style={{ translate: '0 1px' }}
-    >
-      {pole}
-      {flag}
-      {base}
-    </div>
-  );
 }
