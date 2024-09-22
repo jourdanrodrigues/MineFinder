@@ -15,10 +15,10 @@ export function DarkModeToggle({ className }: { className?: string }) {
       document.documentElement.classList.remove('dark');
     }
 
-    query.addEventListener('change', clearDarkModeFlag);
-    return () => query.removeEventListener('change', clearDarkModeFlag);
+    query.addEventListener('change', clearDarkMode);
+    return () => query.removeEventListener('change', clearDarkMode);
 
-    function clearDarkModeFlag(): void {
+    function clearDarkMode(): void {
       localStorage.removeItem('theme');
       forceRerender();
     }
@@ -51,8 +51,7 @@ export function DarkModeToggle({ className }: { className?: string }) {
 function isCurrentlyDark(): boolean {
   const theme = getStorageTheme();
   if (theme === 'dark') return true;
-  if (theme === 'light') return false;
-  return getDarkThemeMediaQuery().matches;
+  return theme !== 'light' && getDarkThemeMediaQuery().matches;
 }
 
 function getStorageTheme(): Theme {

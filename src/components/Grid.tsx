@@ -12,6 +12,7 @@ export const Grid = () => {
   return (
     <div
       className='grid size-fit select-none gap-[2px] border-[2px] border-black bg-contrast dark:border-contrast-dark dark:bg-contrast-dark'
+      onContextMenu={(e) => e.preventDefault()}
       style={{
         gridTemplateRows: `repeat(${rowCount}, 2rem)`,
         gridTemplateColumns: `repeat(${columnCount}, 2rem)`,

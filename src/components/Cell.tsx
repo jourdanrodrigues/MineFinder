@@ -1,5 +1,5 @@
 import { cn, getMouseButtonClicked } from '@/utils';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { BombFlag } from '@/components/BombFlag.tsx';
 
 export function Cell({
@@ -18,6 +18,10 @@ export function Cell({
   onFlag: () => void;
 }) {
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const isTouchOnlyDevice = useMemo(
+    () => window.matchMedia('(hover: none)').matches,
+    [],
+  );
 
   const absoluteCenterClassName =
     'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 will-change-[opacity]';
@@ -28,7 +32,7 @@ export function Cell({
         !isRevealed ? 'cursor-pointer' : 'cursor-default',
         {
           'hover:bg-gray-200 dark:hover:bg-neutral-600':
-            !isRevealed && !isFlagged,
+            !isRevealed && !isFlagged && !isTouchOnlyDevice,
           'bg-rose-300 dark:bg-[#B14C21]': isRevealed && isBomb,
           'bg-green-200 dark:bg-[#0b3e3c]': isRevealed && !isBomb,
           'bg-yellow-100 dark:bg-yellow-800': isFlagged,
@@ -83,7 +87,7 @@ export function Cell({
     const timeoutId = setTimeout(() => {
       onFlag();
       setTimeoutId(null);
-    }, 300);
+    }, 200);
 
     setTimeoutId(timeoutId);
   }
