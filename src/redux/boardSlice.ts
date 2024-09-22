@@ -214,6 +214,8 @@ export const boardSlice = createSlice({
   },
 });
 
+export const { mark, reveal, startNewGame, finishGame } = boardSlice.actions;
+
 function isBetween(value: number, begin: number, end: number): boolean {
   return value >= begin && value <= end;
 }

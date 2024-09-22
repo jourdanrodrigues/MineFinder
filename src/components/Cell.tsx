@@ -1,7 +1,12 @@
 import { cn, getMouseButtonClicked } from '@/utils';
 import React, { useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks.ts';
-import { boardSlice, selectCellState } from '@/redux/boardSlice.ts';
+import {
+  finishGame,
+  mark,
+  reveal,
+  selectCellState,
+} from '@/redux/boardSlice.ts';
 
 export function Cell({ row, column }: { row: number; column: number }) {
   const cellId = `${row}-${column}`;
@@ -20,7 +25,7 @@ export function Cell({ row, column }: { row: number; column: number }) {
   return (
     <div
       className={cn(
-        'flex relative justify-center items-center transition-all bg-primary-canvas dark:bg-primary-canvas-dark size-full border-contrast border-[1px] dark:border-contrast-dark',
+        'flex justify-center items-center transition-all bg-primary-canvas dark:bg-primary-canvas-dark size-full border-contrast border-[1px] dark:border-contrast-dark',
         !isRevealed ? 'cursor-pointer' : 'cursor-default',
         {
           'hover:bg-gray-200 dark:hover:bg-neutral-600':
@@ -35,31 +40,33 @@ export function Cell({ row, column }: { row: number; column: number }) {
       onTouchEnd={stopTouching}
       onMouseDown={handleClick}
     >
-      <span
-        className={cn(
-          !isFlagged && isBomb && isRevealed ? 'opacity-100' : 'opacity-0',
-          contentClassName,
-        )}
-      >
-        💣
-      </span>
-      <span
-        className={cn(
-          isFlagged ? 'opacity-100' : 'opacity-0',
-          contentClassName,
-        )}
-      >
-        🚩
-      </span>
-      <span
-        className={cn(
-          'text-center text-xl dark:text-contrast-dark leading-[100%]',
-          !isFlagged && !isBomb && isRevealed ? 'opacity-100' : 'opacity-0',
-          contentClassName,
-        )}
-      >
-        {neighborBombs > 0 ? neighborBombs : ''}
-      </span>
+      <div className='relative'>
+        <span
+          className={cn(
+            !isFlagged && isBomb && isRevealed ? 'opacity-100' : 'opacity-0',
+            contentClassName,
+          )}
+        >
+          💣
+        </span>
+        <span
+          className={cn(
+            isFlagged ? 'opacity-100' : 'opacity-0',
+            contentClassName,
+          )}
+        >
+          🚩
+        </span>
+        <span
+          className={cn(
+            'text-center text-xl dark:text-contrast-dark leading-[100%]',
+            !isFlagged && !isBomb && isRevealed ? 'opacity-100' : 'opacity-0',
+            contentClassName,
+          )}
+        >
+          {neighborBombs > 0 ? neighborBombs : ''}
+        </span>
+      </div>
     </div>
   );
 
@@ -99,15 +106,15 @@ export function Cell({ row, column }: { row: number; column: number }) {
   }
 
   function onFlag() {
-    dispatch(boardSlice.actions.mark({ x: row, y: column }));
+    dispatch(mark({ x: row, y: column }));
   }
 
   function onReveal() {
     if (isFlagged) return;
     if (isBomb) {
-      dispatch(boardSlice.actions.finishGame());
+      dispatch(finishGame());
     } else {
-      dispatch(boardSlice.actions.reveal({ x: row, y: column }));
+      dispatch(reveal({ x: row, y: column }));
     }
   }
 }

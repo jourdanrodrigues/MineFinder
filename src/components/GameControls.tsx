@@ -1,10 +1,10 @@
 import { NumberInput } from '@/components/Input.tsx';
 import { useAppDispatch } from '@/redux/hooks.ts';
 import {
-  boardSlice,
   DEFAULT_BOMBS,
   DEFAULT_COLUMNS,
   DEFAULT_ROWS,
+  startNewGame,
 } from '@/redux/boardSlice.ts';
 import { useState } from 'react';
 
@@ -21,9 +21,7 @@ export function Controls() {
       <NumberInput label='Rows' onChange={setRows} value={rows} />
       <button
         className='rounded-lg bg-contrast px-4 py-2 text-primary dark:bg-contrast-dark dark:text-primary-dark'
-        onClick={() =>
-          dispatch(boardSlice.actions.startNewGame({ bombs, columns, rows }))
-        }
+        onClick={() => dispatch(startNewGame({ bombs, columns, rows }))}
         type='button'
       >
         Start a new game
