@@ -86,11 +86,9 @@ export const boardSlice = createSlice({
       const bombs = new Set(state.bombs);
       const revealed = new Set(state.revealed);
 
-      const now = Date.now();
       const newRevealed = state.revealed
         .concat([cellId, ...findNeighborsToReveal(new Set(), cell)])
         .filter((cellId) => !flagged.has(cellId));
-      console.log('reveal', Date.now() - now);
 
       if (newRevealed.some((cellId) => bombs.has(cellId))) {
         state.flagged = [];
