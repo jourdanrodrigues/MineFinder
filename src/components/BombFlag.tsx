@@ -7,7 +7,7 @@ export function BombFlag({ className }: { className?: string }) {
   const base = (
     <polygon
       points='0,97 10,83 90,83 100,97'
-      className='fill-gray-400 stroke-black'
+      className='fill-gray-400 stroke-black dark:fill-gray-600'
     />
   );
   const flag = (
@@ -17,7 +17,7 @@ export function BombFlag({ className }: { className?: string }) {
       L 85,33
       C 75,43 65,23 45,33
       Z'
-      className='fill-red-400 stroke-black'
+      className='fill-red-400 stroke-black dark:fill-orange-700'
     />
   );
   return (

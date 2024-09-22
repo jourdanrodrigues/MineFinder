@@ -24,13 +24,14 @@ export function Cell({
   return (
     <div
       className={cn(
-        'flex relative justify-center items-center transition-all bg-white aspect-square size-full',
+        'flex relative justify-center items-center transition-all bg-primary-canvas dark:bg-primary-canvas-dark size-full',
         !isRevealed ? 'cursor-pointer' : 'cursor-default',
         {
-          'hover:bg-gray-200': !isRevealed && !isFlagged,
-          'bg-red-100': isRevealed && isBomb,
-          'bg-green-100': isRevealed && !isBomb,
-          'bg-yellow-100': isFlagged,
+          'hover:bg-gray-200 dark:hover:bg-neutral-600':
+            !isRevealed && !isFlagged,
+          'bg-rose-300 dark:bg-[#B14C21]': isRevealed && isBomb,
+          'bg-green-200 dark:bg-[#0b3e3c]': isRevealed && !isBomb,
+          'bg-yellow-100 dark:bg-yellow-800': isFlagged,
         },
       )}
       onContextMenu={(e) => e.preventDefault()}
@@ -41,7 +42,7 @@ export function Cell({
     >
       <span
         className={cn(
-          'block size-[80%] rounded-[50%] border-2 border-black transition-all',
+          'block size-[80%] rounded-[50%] border-2 border-contrast dark:border-[#732200] transition-all will-change-[border-color]',
           !isFlagged && isBomb && isRevealed ? 'opacity-100' : 'opacity-0',
           absoluteCenterClassName,
         )}
@@ -55,7 +56,7 @@ export function Cell({
       />
       <span
         className={cn(
-          'block transition-opacity text-center text-xl leading-[100%]',
+          'block transition-opacity text-center text-xl dark:text-contrast-dark leading-[100%]',
           !isFlagged && !isBomb && isRevealed ? 'opacity-100' : 'opacity-0',
           absoluteCenterClassName,
         )}

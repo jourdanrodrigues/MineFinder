@@ -1,11 +1,13 @@
 import { Controls } from '@/components/GameControls.tsx';
 import { Grid } from '@/components/Grid.tsx';
+import { DarkModeToggle } from '@/components/DarkModeToggle.tsx';
 
 function App() {
   return (
-    <div className='flex flex-col items-center justify-center'>
+    <div className='flex size-full flex-col items-center justify-center bg-primary-canvas dark:bg-primary-canvas-dark'>
       <Controls />
-      <Grid className='h-fit w-full max-w-full' />
+      <Grid />
+      <DarkModeToggle className='fixed bottom-2 right-2' />
     </div>
   );
 }

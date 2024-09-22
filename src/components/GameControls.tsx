@@ -15,23 +15,12 @@ export function Controls() {
   const dispatch = useAppDispatch();
 
   return (
-    <div className='my-12 flex h-28 w-60 flex-col justify-between'>
-      <NumberInput
-        label='Bombs'
-        onChange={(e) => setBombs(+e.target.value)}
-        value={bombs}
-      />
-      <NumberInput
-        label='Columns'
-        onChange={(e) => setColumns(+e.target.value)}
-        value={columns}
-      />
-      <NumberInput
-        label='Rows'
-        onChange={(e) => setRows(+e.target.value)}
-        value={rows}
-      />
+    <div className='my-12 flex h-28 w-60 flex-col items-center justify-between gap-1'>
+      <NumberInput label='Bombs' onChange={setBombs} value={bombs} />
+      <NumberInput label='Columns' onChange={setColumns} value={columns} />
+      <NumberInput label='Rows' onChange={setRows} value={rows} />
       <button
+        className='rounded-lg bg-contrast px-4 py-2 text-primary dark:bg-contrast-dark dark:text-primary-dark'
         onClick={() =>
           dispatch(boardSlice.actions.startNewGame({ bombs, columns, rows }))
         }
