@@ -28,7 +28,7 @@ export function Cell({
   return (
     <div
       className={cn(
-        'flex relative justify-center items-center transition-all bg-primary-canvas dark:bg-primary-canvas-dark size-full',
+        'flex relative justify-center items-center transition-all bg-primary-canvas dark:bg-primary-canvas-dark size-full border-contrast border-[1px] dark:border-contrast-dark',
         !isRevealed ? 'cursor-pointer' : 'cursor-default',
         {
           'hover:bg-gray-200 dark:hover:bg-neutral-600':

@@ -15,7 +15,7 @@ export function Controls() {
   const dispatch = useAppDispatch();
 
   return (
-    <div className='my-12 flex h-28 w-60 flex-col items-center justify-between gap-1'>
+    <div className='flex max-w-60 flex-col items-center justify-between gap-1'>
       <NumberInput label='Bombs' onChange={setBombs} value={bombs} />
       <NumberInput label='Columns' onChange={setColumns} value={columns} />
       <NumberInput label='Rows' onChange={setRows} value={rows} />

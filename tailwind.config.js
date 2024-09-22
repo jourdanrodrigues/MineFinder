@@ -15,7 +15,7 @@ export default {
 
         // Dark mode colors
         'primary-dark': '#000000',
-        'primary-canvas-dark': 'rgb(43, 43, 43)',
+        'primary-canvas-dark': '#2B2B2B',
         // 'secondary-dark': '#345678',
         // 'neutral-dark': '#1a1a1a',
         // 'accent-dark': '#ffa726',
