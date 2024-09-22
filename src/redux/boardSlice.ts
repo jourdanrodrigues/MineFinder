@@ -8,7 +8,15 @@ export const DEFAULT_BOMBS = 20;
 export const DEFAULT_COLUMNS = 10;
 export const DEFAULT_ROWS = 10;
 
-export const selectBoardSets = createSelector(
+export const selectGridCounts = createSelector(
+  [
+    (state: RootState) => state.board.rowCount,
+    (state: RootState) => state.board.columnCount,
+  ],
+  (rowCount, columnCount) => ({ rowCount, columnCount }),
+);
+
+const selectBoardSets = createSelector(
   [
     (state: RootState) => state.board.flagged,
     (state: RootState) => state.board.bombs,
@@ -18,6 +26,21 @@ export const selectBoardSets = createSelector(
     flagged: new Set(flagged),
     bombs: new Set(bombs),
     revealed: new Set(revealed),
+  }),
+);
+
+export const selectCellState = createSelector(
+  [
+    selectBoardSets,
+    (state: RootState) => state.board.cellNeighborBombs,
+    (state: RootState) => state.board.isGameOver,
+    (_, cellId: string) => cellId,
+  ],
+  ({ flagged, bombs, revealed }, cellNeighborBombs, isGameOver, cellId) => ({
+    isFlagged: flagged.has(cellId),
+    isBomb: bombs.has(cellId),
+    isRevealed: isGameOver || revealed.has(cellId),
+    neighborBombs: (cellNeighborBombs[cellId] || []).length,
   }),
 );
 

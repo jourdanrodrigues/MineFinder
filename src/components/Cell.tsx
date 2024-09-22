@@ -1,30 +1,22 @@
 import { cn, getMouseButtonClicked } from '@/utils';
 import React, { useMemo, useState } from 'react';
-import { BombFlag } from '@/components/BombFlag.tsx';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks.ts';
+import { boardSlice, selectCellState } from '@/redux/boardSlice.ts';
 
-export function Cell({
-  isBomb,
-  isRevealed,
-  isFlagged,
-  bombsCount,
-  onReveal,
-  onFlag,
-}: {
-  isRevealed: boolean;
-  isFlagged: boolean;
-  isBomb: boolean;
-  bombsCount: number;
-  onReveal: () => void;
-  onFlag: () => void;
-}) {
+export function Cell({ row, column }: { row: number; column: number }) {
+  const cellId = `${row}-${column}`;
+  const { isFlagged, isBomb, isRevealed, neighborBombs } = useAppSelector(
+    (state) => selectCellState(state, cellId),
+  );
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const isTouchOnlyDevice = useMemo(
     () => window.matchMedia('(hover: none)').matches,
     [],
   );
+  const dispatch = useAppDispatch();
 
-  const absoluteCenterClassName =
-    'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 will-change-[opacity]';
+  const contentClassName =
+    'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 will-change-[opacity] transition-opacity';
   return (
     <div
       className={cn(
@@ -35,7 +27,6 @@ export function Cell({
             !isRevealed && !isFlagged && !isTouchOnlyDevice,
           'bg-rose-300 dark:bg-[#B14C21]': isRevealed && isBomb,
           'bg-green-200 dark:bg-[#0b3e3c]': isRevealed && !isBomb,
-          'bg-yellow-100 dark:bg-yellow-800': isFlagged,
         },
       )}
       onContextMenu={(e) => e.preventDefault()}
@@ -46,26 +37,28 @@ export function Cell({
     >
       <span
         className={cn(
-          'block size-[80%] rounded-[50%] border-2 border-contrast dark:border-[#732200] transition-all will-change-[border-color]',
           !isFlagged && isBomb && isRevealed ? 'opacity-100' : 'opacity-0',
-          absoluteCenterClassName,
-        )}
-      />
-      <BombFlag
-        className={cn(
-          'transition-opacity size-5',
-          isFlagged ? 'opacity-100' : 'opacity-0',
-          absoluteCenterClassName,
-        )}
-      />
-      <span
-        className={cn(
-          'block transition-opacity text-center text-xl dark:text-contrast-dark leading-[100%]',
-          !isFlagged && !isBomb && isRevealed ? 'opacity-100' : 'opacity-0',
-          absoluteCenterClassName,
+          contentClassName,
         )}
       >
-        {bombsCount > 0 ? bombsCount : ''}
+        💣
+      </span>
+      <span
+        className={cn(
+          isFlagged ? 'opacity-100' : 'opacity-0',
+          contentClassName,
+        )}
+      >
+        🚩
+      </span>
+      <span
+        className={cn(
+          'text-center text-xl dark:text-contrast-dark leading-[100%]',
+          !isFlagged && !isBomb && isRevealed ? 'opacity-100' : 'opacity-0',
+          contentClassName,
+        )}
+      >
+        {neighborBombs > 0 ? neighborBombs : ''}
       </span>
     </div>
   );
@@ -87,7 +80,7 @@ export function Cell({
     const timeoutId = setTimeout(() => {
       onFlag();
       setTimeoutId(null);
-    }, 200);
+    }, 140);
 
     setTimeoutId(timeoutId);
   }
@@ -103,5 +96,18 @@ export function Cell({
     if (!timeoutId) return;
     clearTimeout(timeoutId);
     setTimeoutId(null);
+  }
+
+  function onFlag() {
+    dispatch(boardSlice.actions.mark({ x: row, y: column }));
+  }
+
+  function onReveal() {
+    if (isFlagged) return;
+    if (isBomb) {
+      dispatch(boardSlice.actions.finishGame());
+    } else {
+      dispatch(boardSlice.actions.reveal({ x: row, y: column }));
+    }
   }
 }

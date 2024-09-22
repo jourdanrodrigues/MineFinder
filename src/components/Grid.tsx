@@ -1,13 +1,10 @@
 import { Cell } from '@/components/Cell.tsx';
 import { range } from '@/utils';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks.ts';
-import { boardSlice, selectBoardSets } from '@/redux/boardSlice.ts';
+import { useAppSelector } from '@/redux/hooks.ts';
+import { selectGridCounts } from '@/redux/boardSlice.ts';
 
 export const Grid = () => {
-  const dispatch = useAppDispatch();
-  const { flagged, bombs, revealed } = useAppSelector(selectBoardSets);
-  const { isGameOver, rowCount, columnCount, cellNeighborBombs } =
-    useAppSelector((state) => state.board);
+  const { rowCount, columnCount } = useAppSelector(selectGridCounts);
 
   return (
     <div
@@ -18,31 +15,9 @@ export const Grid = () => {
       }}
     >
       {range(rowCount).map((row) =>
-        range(columnCount).map((column) => {
-          const cell = { x: row, y: column };
-          const cellId = `${row}-${column}`;
-          const isFlagged = flagged.has(cellId);
-          const isBomb = bombs.has(cellId);
-          const isRevealed = revealed.has(cellId);
-          return (
-            <Cell
-              key={cellId}
-              isBomb={isBomb}
-              bombsCount={cellNeighborBombs[cellId]?.length || 0}
-              isFlagged={isFlagged}
-              isRevealed={isGameOver || (!isFlagged && isRevealed)}
-              onFlag={() => dispatch(boardSlice.actions.mark(cell))}
-              onReveal={() => {
-                if (isFlagged) return;
-                if (isBomb) {
-                  dispatch(boardSlice.actions.finishGame());
-                } else {
-                  dispatch(boardSlice.actions.reveal(cell));
-                }
-              }}
-            />
-          );
-        }),
+        range(columnCount).map((column) => (
+          <Cell key={`${row}-${column}`} row={row} column={column} />
+        )),
       )}
     </div>
   );
