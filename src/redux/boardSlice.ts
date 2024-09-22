@@ -16,32 +16,21 @@ export const selectGridCounts = createSelector(
   (rowCount, columnCount) => ({ rowCount, columnCount }),
 );
 
-const selectBoardSets = createSelector(
-  [
-    (state: RootState) => state.board.flagged,
-    (state: RootState) => state.board.bombs,
-    (state: RootState) => state.board.revealed,
-  ],
-  (flagged, bombs, revealed) => ({
-    flagged: new Set(flagged),
-    bombs: new Set(bombs),
-    revealed: new Set(revealed),
-  }),
-);
-
 export const selectCellState = createSelector(
   [
-    selectBoardSets,
-    (state: RootState) => state.board.cellNeighborBombs,
     (state: RootState) => state.board.isGameOver,
-    (_, cellId: string) => cellId,
+    (state: RootState, cellId: string) => state.board.cells[cellId],
+    (state: RootState, cellId: string) => state.board.cellNeighborBombs[cellId],
   ],
-  ({ flagged, bombs, revealed }, cellNeighborBombs, isGameOver, cellId) => ({
-    isFlagged: flagged.has(cellId),
-    isBomb: bombs.has(cellId),
-    isRevealed: isGameOver || revealed.has(cellId),
-    neighborBombs: (cellNeighborBombs[cellId] || []).length,
-  }),
+  (isGameOver, cell, cellNeighborBombs) => {
+    const { isFlagged, isBomb, isRevealed } = cell || {};
+    return {
+      isFlagged: !isGameOver && isFlagged,
+      isBomb,
+      isRevealed: isGameOver || isRevealed,
+      neighborBombs: (cellNeighborBombs || []).length,
+    };
+  },
 );
 
 const initialState: {
@@ -49,19 +38,18 @@ const initialState: {
   bombCount: number;
   columnCount: number;
   rowCount: number;
-  flagged: string[];
-  bombs: string[];
-  revealed: string[];
   cellNeighborBombs: Record<string, string[] | undefined>;
+  cells: Record<
+    string,
+    undefined | { isRevealed: boolean; isBomb: boolean; isFlagged: boolean }
+  >;
 } = {
   isGameOver: false,
   bombCount: DEFAULT_BOMBS,
   columnCount: DEFAULT_COLUMNS,
   rowCount: DEFAULT_ROWS,
-  flagged: [],
-  bombs: [],
-  revealed: [],
   cellNeighborBombs: {},
+  cells: {},
 };
 
 export const boardSlice = createSlice({
@@ -72,9 +60,7 @@ export const boardSlice = createSlice({
       state,
       action: PayloadAction<{ bombs: number; rows: number; columns: number }>,
     ) => {
-      state.flagged = [];
-      state.revealed = [];
-      state.bombs = [];
+      state.cells = {};
       state.cellNeighborBombs = {};
       state.bombCount = action.payload.bombs;
       state.rowCount = action.payload.rows;
@@ -82,45 +68,37 @@ export const boardSlice = createSlice({
       state.isGameOver = false;
     },
     finishGame: (state) => {
-      state.flagged = [];
-      state.revealed = [];
       state.isGameOver = true;
     },
-    mark: (state, { payload: { x, y } }: PayloadAction<Cell>): void => {
+    flag: (state, { payload: { x, y } }: PayloadAction<Cell>): void => {
       if (state.isGameOver) return;
       const cellId = `${x}-${y}`;
 
-      const index = state.flagged.indexOf(cellId);
-      if (index !== -1) {
-        state.flagged.splice(index, 1);
-      } else if (!state.revealed.includes(cellId)) {
-        state.flagged.push(cellId);
-      }
+      state.cells[cellId]!.isFlagged = !state.cells[cellId]!.isFlagged;
     },
-    reveal: (state, { payload: cell }: PayloadAction<Cell>) => {
-      if (state.bombs.length === 0) {
-        fillBombs(cell);
+    reveal: (state, { payload: { x, y } }: PayloadAction<Cell>) => {
+      if (state.isGameOver) return;
+      if (Object.keys(state.cells).length === 0) {
+        fillBoard({ x, y });
       }
 
-      const cellId = `${cell.x}-${cell.y}`;
-      const flagged = new Set(state.flagged);
-      if (flagged.has(cellId)) return;
+      const cellId = `${x}-${y}`;
+      const cell = state.cells[cellId];
+      if (cell?.isFlagged) return;
 
-      const bombs = new Set(state.bombs);
-      const revealed = new Set(state.revealed);
+      const newRevealed = [
+        cellId,
+        ...findNeighborsToReveal(new Set(), { x, y }),
+      ].filter((cellId) => !state.cells[cellId]?.isFlagged);
 
-      const newRevealed = state.revealed
-        .concat([cellId, ...findNeighborsToReveal(new Set(), cell)])
-        .filter((cellId) => !flagged.has(cellId));
-
-      if (newRevealed.some((cellId) => bombs.has(cellId))) {
-        state.flagged = [];
-        state.revealed = [];
-        state.isGameOver = true;
-        return;
+      for (const cellId of newRevealed) {
+        const cell = state.cells[cellId];
+        if (cell!.isBomb) {
+          state.isGameOver = true;
+        } else {
+          cell!.isRevealed = true;
+        }
       }
-
-      state.revealed = newRevealed;
 
       function findNeighborsToReveal(
         output: Set<string>,
@@ -131,7 +109,7 @@ export const boardSlice = createSlice({
 
         const neighbors = getNeighbors({ x, y }).filter(
           // Walking over neighbors already revealed can impact performance.
-          ({ x, y }) => !revealed.has(`${x}-${y}`),
+          ({ x, y }) => !state.cells[`${x}-${y}`]!.isRevealed,
         );
         if (hasUnmarkedBombs(cellId, neighbors)) return output;
 
@@ -151,22 +129,23 @@ export const boardSlice = createSlice({
       }
 
       function hasUnmarkedBombs(cellId: string, neighbors: Cell[]): boolean {
-        if (bombs.has(cellId)) return true;
+        if (state.cells[cellId]!.isBomb) return true;
 
         const neighborBombs = (state.cellNeighborBombs[cellId] || []).length;
         let neighborsFlagged = 0;
         neighbors.forEach(({ x, y }) => {
           const neighborId = `${x}-${y}`;
-          if (!flagged.has(neighborId)) return;
+          if (!state.cells[neighborId]!.isFlagged) return;
           neighborsFlagged += 1;
         });
 
         return neighborBombs > 0 && neighborBombs !== neighborsFlagged;
       }
 
-      function fillBombs(origin: Cell): void {
+      function fillBoard(origin: Cell): void {
         const bombOptions = range(state.rowCount).reduce((output, row) => {
           return range(state.columnCount).reduce((output, column) => {
+            state.cells[`${row}-${column}`] = getNewCell();
             const isSame = row === origin.x && column === origin.y;
             const isNeighbor = areNeighbors(origin, { x: row, y: column });
             return isSame || isNeighbor
@@ -177,21 +156,17 @@ export const boardSlice = createSlice({
 
         range(state.bombCount).forEach(() => {
           const i = Math.floor(Math.random() * bombOptions.length);
-          state.bombs.push(bombOptions[i]);
+          const bombId = bombOptions[i];
+          const [x, y] = bombId.split('-').map(Number);
+          state.cells[bombId]!.isBomb = true;
           bombOptions.splice(i, 1);
-        });
 
-        state.cellNeighborBombs = state.bombs.reduce(
-          (output, bomb) => {
-            const [x, y] = bomb.split('-').map(Number);
-            return getNeighbors({ x, y }).reduce((output, { x, y }) => {
-              const cellId = `${x}-${y}`;
-              const currentBombs = output[cellId] || [];
-              return { ...output, [cellId]: [...currentBombs, bomb] };
-            }, output);
-          },
-          {} as Record<string, string[]>,
-        );
+          getNeighbors({ x, y }).forEach(({ x, y }) => {
+            const cellId = `${x}-${y}`;
+            const currentBombs = state.cellNeighborBombs[cellId] || [];
+            state.cellNeighborBombs[cellId] = [...currentBombs, bombId];
+          });
+        });
       }
 
       function getNeighbors(cell: Cell): Cell[] {
@@ -214,8 +189,16 @@ export const boardSlice = createSlice({
   },
 });
 
-export const { mark, reveal, startNewGame, finishGame } = boardSlice.actions;
+export const { flag, reveal, startNewGame, finishGame } = boardSlice.actions;
 
 function isBetween(value: number, begin: number, end: number): boolean {
   return value >= begin && value <= end;
+}
+
+function getNewCell(): {
+  isBomb: boolean;
+  isFlagged: boolean;
+  isRevealed: boolean;
+} {
+  return { isBomb: false, isFlagged: false, isRevealed: false };
 }

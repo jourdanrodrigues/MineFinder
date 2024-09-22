@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks.ts';
 import {
   finishGame,
-  mark,
+  flag,
   reveal,
   selectCellState,
 } from '@/redux/boardSlice.ts';
@@ -106,7 +106,7 @@ export function Cell({ row, column }: { row: number; column: number }) {
   }
 
   function onFlag() {
-    dispatch(mark({ x: row, y: column }));
+    dispatch(flag({ x: row, y: column }));
   }
 
   function onReveal() {
