@@ -16,6 +16,19 @@ export const selectGridCounts = createSelector(
   (rowCount, columnCount) => ({ rowCount, columnCount }),
 );
 
+export const selectBombMinusFlagCount = createSelector(
+  [
+    (state: RootState) => state.board.bombCount,
+    (state: RootState) => state.board.cells,
+    (state: RootState) => state.board.isGameOver,
+  ],
+  (bombCount, cells, isGameOver) => {
+    if (isGameOver) return 0;
+    const flags = Object.values(cells).filter((cell) => cell?.isFlagged).length;
+    return bombCount - flags;
+  },
+);
+
 export const selectCellState = createSelector(
   [
     (state: RootState) => state.board.isGameOver,
