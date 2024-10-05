@@ -5,6 +5,31 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + React + TS</title>
+    <script>
+      <!-- This is to apply theme class before paint -->
+      const theme = localStorage.getItem('theme');
+      const query = window.matchMedia('(prefers-color-scheme: dark)');
+
+      const matches = theme === 'dark' || (!theme && query.matches);
+      setDarkModeClass(matches);
+
+      query.addEventListener('change', (e) => {
+        localStorage.removeItem('theme');
+        setDarkModeClass(e.matches);
+      });
+
+      /**
+       * @param {boolean} flag
+       * @returns {void}
+       */
+      function setDarkModeClass(flag) {
+        if (flag) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

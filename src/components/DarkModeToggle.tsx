@@ -1,29 +1,8 @@
-import { useEffect } from 'react';
-import { cn, useForceRerender } from '@/utils.ts';
+import { cn } from '@/utils.ts';
 
 type Theme = 'dark' | 'light' | 'system';
 
 export function DarkModeToggle({ className }: { className?: string }) {
-  const forceRerender = useForceRerender();
-
-  useEffect(() => {
-    const theme = getStorageTheme();
-    const query = getDarkThemeMediaQuery();
-    if (theme === 'dark' || (theme === 'system' && query.matches)) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-
-    query.addEventListener('change', clearDarkMode);
-    return () => query.removeEventListener('change', clearDarkMode);
-
-    function clearDarkMode(): void {
-      localStorage.removeItem('theme');
-      forceRerender();
-    }
-  }, [forceRerender]);
-
   const isDark = isCurrentlyDark();
 
   const contentClassName =
@@ -44,7 +23,6 @@ export function DarkModeToggle({ className }: { className?: string }) {
   function toggleDarkMode(): void {
     const isDark = document.documentElement.classList.toggle('dark');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    forceRerender();
   }
 }
 
