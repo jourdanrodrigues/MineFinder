@@ -1,12 +1,7 @@
-import { cn, getMouseButtonClicked } from '@/utils';
-import React, { useMemo, useState } from 'react';
+import { cn, getMouseButtonClicked, useIsTouchOnly } from '@/utils';
+import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks.ts';
-import {
-  revealBomb,
-  flag,
-  reveal,
-  selectCellState,
-} from '@/redux/boardSlice.ts';
+import { flag, reveal, selectCellState } from '@/redux/boardSlice.ts';
 
 export function Cell({ row, column }: { row: number; column: number }) {
   const cellId = `${row}-${column}`;
@@ -15,10 +10,7 @@ export function Cell({ row, column }: { row: number; column: number }) {
   );
   const revealedBomb = useAppSelector((state) => state.board.revealedBomb);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
-  const isTouchOnlyDevice = useMemo(
-    () => window.matchMedia('(hover: none)').matches,
-    [],
-  );
+  const isTouchOnly = useIsTouchOnly();
   const dispatch = useAppDispatch();
 
   const contentClassName =
@@ -30,7 +22,7 @@ export function Cell({ row, column }: { row: number; column: number }) {
         !isRevealed ? 'cursor-pointer' : 'cursor-default',
         {
           'hover:bg-gray-200 dark:hover:bg-neutral-600':
-            !isRevealed && !isFlagged && !isTouchOnlyDevice,
+            !isRevealed && !isFlagged && !isTouchOnly,
           'bg-rose-300 dark:bg-[#B14C21]': isRevealed && isBomb,
           'bg-green-200 dark:bg-[#0b3e3c]': isRevealed && !isBomb,
         },
@@ -77,16 +69,16 @@ export function Cell({ row, column }: { row: number; column: number }) {
 
     e.stopPropagation();
     if (button === 'left') {
-      onReveal();
+      dispatch(reveal(cellId));
     } else if (button === 'right') {
-      onFlag();
+      dispatch(flag(cellId));
     }
   }
 
   function startTouching(e: React.TouchEvent) {
     e.preventDefault();
     const timeoutId = setTimeout(() => {
-      onFlag();
+      dispatch(flag(cellId));
       setTimeoutId(null);
     }, 140);
 
@@ -96,7 +88,7 @@ export function Cell({ row, column }: { row: number; column: number }) {
   function stopTouching(e: React.TouchEvent) {
     e.preventDefault();
     if (!timeoutId) return;
-    onReveal();
+    dispatch(reveal(cellId));
     cancelTimeout();
   }
 
@@ -104,18 +96,5 @@ export function Cell({ row, column }: { row: number; column: number }) {
     if (!timeoutId) return;
     clearTimeout(timeoutId);
     setTimeoutId(null);
-  }
-
-  function onFlag() {
-    dispatch(flag({ x: row, y: column }));
-  }
-
-  function onReveal() {
-    if (isFlagged) return;
-    if (isBomb) {
-      dispatch(revealBomb(cellId));
-    } else {
-      dispatch(reveal({ x: row, y: column }));
-    }
   }
 }

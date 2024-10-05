@@ -2,7 +2,7 @@ import { useAppSelector } from '@/redux/hooks.ts';
 import { confetti } from '@tsparticles/confetti';
 import { useEffect, useMemo } from 'react';
 import { selectIsGameWon } from '@/redux/boardSlice.ts';
-import { useIsDarkMode } from '@/useIsDarkMode.ts';
+import { useIsDarkMode } from '@/hooks/useIsDarkMode.ts';
 
 export function Confetti() {
   const isGameWon = useAppSelector(selectIsGameWon);

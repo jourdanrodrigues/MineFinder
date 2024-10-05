@@ -96,23 +96,24 @@ export const boardSlice = createSlice({
         state.columnCount = action.payload.columns;
       }
     },
-    revealBomb: (state, { payload: cellId }: PayloadAction<string>) => {
-      state.revealedBomb = cellId;
-    },
-    flag: (state, { payload: { x, y } }: PayloadAction<Cell>): void => {
+    flag: (state, { payload: cellId }: PayloadAction<string>): void => {
       if (state.revealedBomb) return;
-      const cellId = `${x}-${y}`;
 
       state.cells[cellId]!.isFlagged = !state.cells[cellId]!.isFlagged;
     },
-    reveal: (state, { payload: { x, y } }: PayloadAction<Cell>) => {
+    reveal: (state, { payload: cellId }: PayloadAction<string>) => {
       if (state.revealedBomb) return;
+      const [x, y] = cellId.split('-').map(Number);
       if (Object.keys(state.cells).length === 0) {
         fillBoard({ x, y });
       }
 
-      const cellId = `${x}-${y}`;
       const cell = state.cells[cellId];
+
+      if (cell?.isBomb) {
+        state.revealedBomb = cellId;
+        return;
+      }
       if (cell?.isFlagged) return;
 
       const newRevealed = [
@@ -218,7 +219,7 @@ export const boardSlice = createSlice({
   },
 });
 
-export const { flag, reveal, startNewGame, revealBomb } = boardSlice.actions;
+export const { flag, reveal, startNewGame } = boardSlice.actions;
 
 function isBetween(value: number, begin: number, end: number): boolean {
   return value >= begin && value <= end;

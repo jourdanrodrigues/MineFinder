@@ -1,6 +1,6 @@
 import clsx, { ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 export function range(number: number): number[] {
   return Array.from(new Array(number).keys());
@@ -37,4 +37,8 @@ export function useForceRerender() {
   // We want to have this function cause a rerender if used as a dependency
   // eslint-disable-next-line react-hooks/exhaustive-deps
   return useCallback(() => setValue((value) => !value), [value]);
+}
+
+export function useIsTouchOnly() {
+  return useMemo(() => window.matchMedia('(hover: none)').matches, []);
 }
