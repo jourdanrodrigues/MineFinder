@@ -1,6 +1,6 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '@/redux/store';
-import { areNeighbors, range } from '@/utils.ts';
+import { range } from '@/utils.ts';
 
 type Cell = { x: number; y: number };
 
@@ -220,6 +220,18 @@ export const boardSlice = createSlice({
 });
 
 export const { flag, reveal, startNewGame } = boardSlice.actions;
+
+export function areNeighbors(
+  cellA: { x: number; y: number },
+  cellB: { x: number; y: number },
+): boolean {
+  return (
+    cellA.x >= cellB.x - 1 &&
+    cellA.x <= cellB.x + 1 &&
+    cellA.y >= cellB.y - 1 &&
+    cellA.y <= cellB.y + 1
+  );
+}
 
 function isBetween(value: number, begin: number, end: number): boolean {
   return value >= begin && value <= end;

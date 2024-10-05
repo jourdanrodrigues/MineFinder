@@ -20,18 +20,6 @@ export function getMouseButtonClicked(
   return 'left';
 }
 
-export function areNeighbors(
-  cellA: { x: number; y: number },
-  cellB: { x: number; y: number },
-): boolean {
-  return (
-    cellA.x >= cellB.x - 1 &&
-    cellA.x <= cellB.x + 1 &&
-    cellA.y >= cellB.y - 1 &&
-    cellA.y <= cellB.y + 1
-  );
-}
-
 export function useForceRerender() {
   const [value, setValue] = useState(false);
   // We want to have this function cause a rerender if used as a dependency
