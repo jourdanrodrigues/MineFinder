@@ -8,8 +8,13 @@ import {
   selectIsGameWon,
 } from '@/redux/boardSlice.ts';
 
-export function Cell({ row, column }: { row: number; column: number }) {
-  const cellId = `${row}-${column}`;
+export function Cell({
+  cellId,
+  className,
+}: {
+  cellId: string;
+  className?: string;
+}) {
   const { isFlagged, isBomb, isRevealed, neighborBombs } = useAppSelector(
     (state) => selectCellState(state, cellId),
   );
@@ -27,7 +32,7 @@ export function Cell({ row, column }: { row: number; column: number }) {
   return (
     <div
       className={cn(
-        'flex justify-center items-center transition-all bg-primary-canvas dark:bg-primary-canvas-dark size-full border-contrast border-[1px] dark:border-contrast-dark',
+        'flex justify-center items-center transition-all bg-primary-canvas dark:bg-primary-canvas-dark size-full',
         isRevealed || isGameOver ? 'cursor-default' : 'cursor-pointer',
         {
           'hover:bg-gray-200 dark:hover:bg-neutral-600':
@@ -35,6 +40,7 @@ export function Cell({ row, column }: { row: number; column: number }) {
           'bg-rose-300 dark:bg-[#B14C21]': revealedBomb && isBomb,
           'bg-green-200 dark:bg-[#0b3e3c]': shouldReveal && !isBomb,
         },
+        className,
       )}
       onContextMenu={(e) => e.preventDefault()}
       onTouchStart={startTouching}

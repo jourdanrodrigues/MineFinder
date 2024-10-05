@@ -3,24 +3,16 @@ import React from 'react';
 export function Button({
   children,
   onClick,
-  suffix,
-  onSuffixClick,
 }: {
   children: React.ReactNode;
   onClick?: () => void;
-  suffix?: React.ReactNode;
-  onSuffixClick?: () => void;
 }) {
   return (
-    <div className='flex divide-x-2 divide-contrast rounded-lg border-2 border-contrast dark:divide-contrast-dark dark:border-contrast-dark dark:text-contrast-dark'>
-      <button className='px-4 py-2' onClick={onClick}>
-        {children}
-      </button>
-      {suffix && (
-        <button className='px-4 py-2' onClick={onSuffixClick}>
-          {suffix}
-        </button>
-      )}
-    </div>
+    <button
+      className='rounded-lg border-[1px] border-contrast px-4 py-2 dark:border-contrast-dark dark:text-contrast-dark'
+      onClick={onClick}
+    >
+      {children}
+    </button>
   );
 }

@@ -107,10 +107,10 @@ export const boardSlice = createSlice({
         fillBoard({ x, y });
       }
 
-      const cell = state.cells[cellId];
+      const cell = state.cells[cellId]!;
 
-      if (cell?.isFlagged) return;
-      if (cell?.isBomb) {
+      if (cell.isFlagged) return;
+      if (cell.isBomb) {
         state.revealedBomb = cellId;
         return;
       }

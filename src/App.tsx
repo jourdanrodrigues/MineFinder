@@ -11,7 +11,7 @@ function App() {
   return (
     <div className='flex size-full flex-col items-center justify-center gap-10 bg-primary-canvas dark:bg-primary-canvas-dark'>
       <Confetti />
-      <Grid className='mt-20' />
+      <Grid className='mt-28' />
       <TopBar onSettingsClick={() => setControlsOpen(true)} />
       <GameControlsModal
         open={controlsOpen}

@@ -9,7 +9,7 @@ export const Grid = ({ className }: { className?: string }) => {
   return (
     <div
       className={cn(
-        'grid max-h-full max-w-full select-none overflow-auto overscroll-none border-[1px] border-contrast dark:border-contrast-dark',
+        'grid max-h-full max-w-full select-none overflow-auto overscroll-none border-b border-r border-contrast dark:border-contrast-dark',
         className,
       )}
       style={{
@@ -18,9 +18,16 @@ export const Grid = ({ className }: { className?: string }) => {
       }}
     >
       {range(rowCount).map((row) =>
-        range(columnCount).map((column) => (
-          <Cell key={`${row}-${column}`} row={row} column={column} />
-        )),
+        range(columnCount).map((column) => {
+          const cellId = `${row}-${column}`;
+          return (
+            <Cell
+              key={cellId}
+              cellId={cellId}
+              className='border-l border-t border-contrast dark:border-contrast-dark'
+            />
+          );
+        }),
       )}
     </div>
   );
