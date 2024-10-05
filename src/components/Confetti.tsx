@@ -1,13 +1,19 @@
 import { useAppSelector } from '@/redux/hooks.ts';
 import { confetti } from '@tsparticles/confetti';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { selectIsGameWon } from '@/redux/boardSlice.ts';
+import { useIsDarkMode } from '@/useIsDarkMode.ts';
 
 export function Confetti() {
   const isGameWon = useAppSelector(selectIsGameWon);
+  const isDarkMode = useIsDarkMode();
+  const colors = useMemo(
+    // TODO: Get some real colors here
+    () => (isDarkMode ? ['#257f00', '#aa9d00'] : ['#0000ff', '#ff0000']),
+    [isDarkMode],
+  );
 
   useEffect(() => {
-    const colors = ['#257f00', '#aa9d00'];
     let showConfetti = isGameWon;
     if (!showConfetti) return;
 
@@ -44,7 +50,7 @@ export function Confetti() {
         requestAnimationFrame(frame);
       });
     }
-  }, [isGameWon]);
+  }, [isGameWon, colors]);
 
   return null;
 }
