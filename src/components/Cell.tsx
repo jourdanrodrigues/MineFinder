@@ -1,17 +1,26 @@
 import { cn, getMouseButtonClicked, useIsTouchOnly } from '@/utils';
 import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks.ts';
-import { flag, reveal, selectCellState } from '@/redux/boardSlice.ts';
+import {
+  flag,
+  reveal,
+  selectCellState,
+  selectIsGameWon,
+} from '@/redux/boardSlice.ts';
 
 export function Cell({ row, column }: { row: number; column: number }) {
   const cellId = `${row}-${column}`;
   const { isFlagged, isBomb, isRevealed, neighborBombs } = useAppSelector(
     (state) => selectCellState(state, cellId),
   );
+  const isGameWon = useAppSelector(selectIsGameWon);
   const revealedBomb = useAppSelector((state) => state.board.revealedBomb);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const isTouchOnly = useIsTouchOnly();
   const dispatch = useAppDispatch();
+
+  const isGameOver = isGameWon || revealedBomb;
+  const shouldReveal = isRevealed || isGameOver;
 
   const contentClassName =
     'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 will-change-[opacity] transition-opacity';
@@ -19,12 +28,12 @@ export function Cell({ row, column }: { row: number; column: number }) {
     <div
       className={cn(
         'flex justify-center items-center transition-all bg-primary-canvas dark:bg-primary-canvas-dark size-full border-contrast border-[1px] dark:border-contrast-dark',
-        !isRevealed ? 'cursor-pointer' : 'cursor-default',
+        isRevealed || isGameOver ? 'cursor-default' : 'cursor-pointer',
         {
           'hover:bg-gray-200 dark:hover:bg-neutral-600':
-            !isRevealed && !isFlagged && !isTouchOnly,
-          'bg-rose-300 dark:bg-[#B14C21]': isRevealed && isBomb,
-          'bg-green-200 dark:bg-[#0b3e3c]': isRevealed && !isBomb,
+            !isTouchOnly && !isGameOver && !isRevealed,
+          'bg-rose-300 dark:bg-[#B14C21]': revealedBomb && isBomb,
+          'bg-green-200 dark:bg-[#0b3e3c]': shouldReveal && !isBomb,
         },
       )}
       onContextMenu={(e) => e.preventDefault()}
@@ -36,7 +45,7 @@ export function Cell({ row, column }: { row: number; column: number }) {
       <div className='relative'>
         <span
           className={cn(
-            !isFlagged && isBomb && isRevealed ? 'opacity-100' : 'opacity-0',
+            isBomb && shouldReveal ? 'opacity-100' : 'opacity-0',
             contentClassName,
           )}
         >
@@ -44,16 +53,16 @@ export function Cell({ row, column }: { row: number; column: number }) {
         </span>
         <span
           className={cn(
-            isFlagged ? 'opacity-100' : 'opacity-0',
+            isFlagged && !isGameOver ? 'opacity-100' : 'opacity-0',
             contentClassName,
           )}
         >
-          🚩
+          ⛳️
         </span>
         <span
           className={cn(
             'text-center text-xl dark:text-contrast-dark leading-[100%]',
-            !isFlagged && !isBomb && isRevealed ? 'opacity-100' : 'opacity-0',
+            !isFlagged && !isBomb && shouldReveal ? 'opacity-100' : 'opacity-0',
             contentClassName,
           )}
         >

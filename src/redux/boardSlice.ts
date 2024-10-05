@@ -16,31 +16,28 @@ export const selectGridCounts = createSelector(
   (rowCount, columnCount) => ({ rowCount, columnCount }),
 );
 
-export const selectBombMinusFlagCount = createSelector(
+export const selectFlagCount = createSelector(
   [
-    (state: RootState) => state.board.bombCount,
     (state: RootState) => state.board.cells,
     (state: RootState) => state.board.revealedBomb,
   ],
-  (bombCount, cells, revealedBomb) => {
+  (cells, revealedBomb) => {
     if (revealedBomb) return 0;
-    const flags = Object.values(cells).filter((cell) => cell?.isFlagged).length;
-    return bombCount - flags;
+    return Object.values(cells).filter((cell) => cell?.isFlagged).length;
   },
 );
 
 export const selectCellState = createSelector(
   [
-    (state: RootState) => state.board.revealedBomb,
     (state: RootState, cellId: string) => state.board.cells[cellId],
     (state: RootState, cellId: string) => state.board.cellNeighborBombs[cellId],
   ],
-  (revealedBomb, cell, cellNeighborBombs) => {
+  (cell, cellNeighborBombs) => {
     const { isFlagged, isBomb, isRevealed } = cell || {};
     return {
-      isFlagged: !revealedBomb && isFlagged,
+      isFlagged,
       isBomb,
-      isRevealed: revealedBomb || isRevealed,
+      isRevealed,
       neighborBombs: (cellNeighborBombs || []).length,
     };
   },
@@ -48,8 +45,8 @@ export const selectCellState = createSelector(
 
 export const selectIsGameWon = createSelector(
   [
-    (state: RootState) => state.board.revealedBomb,
-    (state: RootState) => state.board.cells,
+    (state: Pick<RootState, 'board'>) => state.board.revealedBomb,
+    (state: Pick<RootState, 'board'>) => state.board.cells,
   ],
   (revealedBomb, cells) => {
     if (revealedBomb) return false;
@@ -97,12 +94,14 @@ export const boardSlice = createSlice({
       }
     },
     flag: (state, { payload: cellId }: PayloadAction<string>): void => {
-      if (state.revealedBomb) return;
+      if (state.revealedBomb || selectIsGameWon({ board: state })) return;
 
-      state.cells[cellId]!.isFlagged = !state.cells[cellId]!.isFlagged;
+      const cell = state.cells[cellId]!;
+      if (cell.isRevealed) return;
+      cell.isFlagged = !cell.isFlagged;
     },
     reveal: (state, { payload: cellId }: PayloadAction<string>) => {
-      if (state.revealedBomb) return;
+      if (state.revealedBomb || selectIsGameWon({ board: state })) return;
       const [x, y] = cellId.split('-').map(Number);
       if (Object.keys(state.cells).length === 0) {
         fillBoard({ x, y });
@@ -110,11 +109,11 @@ export const boardSlice = createSlice({
 
       const cell = state.cells[cellId];
 
+      if (cell?.isFlagged) return;
       if (cell?.isBomb) {
         state.revealedBomb = cellId;
         return;
       }
-      if (cell?.isFlagged) return;
 
       const newRevealed = [
         cellId,
