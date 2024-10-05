@@ -71,14 +71,18 @@ export const boardSlice = createSlice({
   reducers: {
     startNewGame: (
       state,
-      action: PayloadAction<{ bombs: number; rows: number; columns: number }>,
+      action: PayloadAction<
+        { bombs: number; rows: number; columns: number } | undefined
+      >,
     ) => {
       state.cells = {};
       state.cellNeighborBombs = {};
-      state.bombCount = action.payload.bombs;
-      state.rowCount = action.payload.rows;
-      state.columnCount = action.payload.columns;
       state.isGameOver = false;
+      if (action.payload) {
+        state.bombCount = action.payload.bombs;
+        state.rowCount = action.payload.rows;
+        state.columnCount = action.payload.columns;
+      }
     },
     finishGame: (state) => {
       state.isGameOver = true;

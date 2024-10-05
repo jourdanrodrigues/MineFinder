@@ -1,17 +1,21 @@
 import { cn } from '@/utils.ts';
-import { useAppSelector } from '@/redux/hooks.ts';
-import { selectBombMinusFlagCount } from '@/redux/boardSlice.ts';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks.ts';
+import { selectBombMinusFlagCount, startNewGame } from '@/redux/boardSlice.ts';
+import { Button } from '@/components/Button.tsx';
+import { HamburgerIcon } from '@/components/HamburgerIcon.tsx';
 
 export function TopBar({
   drawerOpen,
   onToggleDrawer,
+  onSettingsClick,
 }: {
   drawerOpen: boolean;
   onToggleDrawer: () => void;
+  onSettingsClick: () => void;
 }) {
   const missingBombs = useAppSelector(selectBombMinusFlagCount);
 
-  const hamburgerLineClass = 'h-0.5 w-8 bg-contrast dark:bg-contrast-dark';
+  const dispatch = useAppDispatch();
 
   return (
     <div
@@ -20,32 +24,14 @@ export function TopBar({
         drawerOpen && 'left-48',
       )}
     >
-      <div
-        className='flex cursor-pointer flex-col gap-2'
-        onClick={onToggleDrawer}
+      <HamburgerIcon active={drawerOpen} onClick={onToggleDrawer} />
+      <Button
+        suffix='⚙️'
+        onClick={() => dispatch(startNewGame())}
+        onSuffixClick={onSettingsClick}
       >
-        <div
-          className={cn(
-            'translate-transform',
-            drawerOpen && 'rotate-45 translate-y-[10px]',
-            hamburgerLineClass,
-          )}
-        />
-        <div
-          className={cn(
-            'translate-transform',
-            drawerOpen && '-rotate-45',
-            hamburgerLineClass,
-          )}
-        />
-        <div
-          className={cn(
-            'opacity-100 transition-opacity',
-            drawerOpen && 'opacity-0',
-            hamburgerLineClass,
-          )}
-        />
-      </div>
+        New Game
+      </Button>
       <span className='text-2xl dark:text-contrast-dark'>
         {missingBombs} 💣
       </span>

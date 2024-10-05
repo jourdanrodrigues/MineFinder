@@ -5,7 +5,7 @@ export function Drawer({
   children,
   open,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   open: boolean;
 }) {
   return (

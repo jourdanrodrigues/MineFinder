@@ -37,7 +37,7 @@ export function DarkModeToggle({ className }: { className?: string }) {
       onClick={toggleDarkMode}
     >
       <span className={cn(contentClassName, !isDark && 'opacity-100')}>🌙</span>
-      <span className={cn(contentClassName, isDark && 'opacity-100')}>🌞</span>
+      <span className={cn(contentClassName, isDark && 'opacity-100')}>☀️</span>
     </button>
   );
 
