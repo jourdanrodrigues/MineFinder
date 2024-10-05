@@ -4,9 +4,9 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <title>MineFinder</title>
     <script>
-      <!-- This is to apply theme class before paint -->
+      // To apply theme class before paint
       const theme = localStorage.getItem('theme');
       const query = window.matchMedia('(prefers-color-scheme: dark)');
 
@@ -29,6 +29,11 @@
           document.documentElement.classList.remove('dark');
         }
       }
+    </script>
+    <script>
+      // Some mobile browser don't consider the address bar in the viewport height.
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
     </script>
   </head>
   <body>
