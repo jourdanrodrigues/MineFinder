@@ -4,6 +4,7 @@ import { DarkModeToggle } from '@/components/DarkModeToggle.tsx';
 import { Drawer } from '@/components/Drawer.tsx';
 import { useState } from 'react';
 import { TopBar } from '@/components/TopBar.tsx';
+import { Confetti } from '@/components/Confetti.tsx';
 
 function App() {
   const [controlsOpen, setControlsOpen] = useState(false);
@@ -11,6 +12,7 @@ function App() {
 
   return (
     <div className='flex size-full flex-col items-center justify-center gap-10 bg-primary-canvas dark:bg-primary-canvas-dark'>
+      <Confetti />
       <Grid className='mt-20' />
       <Drawer open={drawerOpen} />
       <TopBar

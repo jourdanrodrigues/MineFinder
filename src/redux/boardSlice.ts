@@ -46,6 +46,19 @@ export const selectCellState = createSelector(
   },
 );
 
+export const selectWonTheGame = createSelector(
+  [
+    (state: RootState) => state.board.revealedBomb,
+    (state: RootState) => state.board.cells,
+    selectBombMinusFlagCount,
+  ],
+  (revealedBomb, cells, missingBombs) => {
+    if (revealedBomb || missingBombs !== 0) return false;
+    const nonBombs = Object.values(cells).filter((cell) => !cell?.isBomb);
+    return nonBombs.length > 0 && nonBombs.every((cell) => cell?.isRevealed);
+  },
+);
+
 const initialState: {
   revealedBomb: string | null; // Setting this ends the game
   bombCount: number;
