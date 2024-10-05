@@ -32,7 +32,7 @@ export function TopBar({
       >
         New Game
       </Button>
-      <span className='text-2xl dark:text-contrast-dark'>
+      <span className='min-w-16 text-right text-2xl dark:text-contrast-dark'>
         {missingBombs} 💣
       </span>
     </div>

@@ -20,10 +20,10 @@ export const selectBombMinusFlagCount = createSelector(
   [
     (state: RootState) => state.board.bombCount,
     (state: RootState) => state.board.cells,
-    (state: RootState) => state.board.isGameOver,
+    (state: RootState) => state.board.revealedBomb,
   ],
-  (bombCount, cells, isGameOver) => {
-    if (isGameOver) return 0;
+  (bombCount, cells, revealedBomb) => {
+    if (revealedBomb) return 0;
     const flags = Object.values(cells).filter((cell) => cell?.isFlagged).length;
     return bombCount - flags;
   },
@@ -31,23 +31,23 @@ export const selectBombMinusFlagCount = createSelector(
 
 export const selectCellState = createSelector(
   [
-    (state: RootState) => state.board.isGameOver,
+    (state: RootState) => state.board.revealedBomb,
     (state: RootState, cellId: string) => state.board.cells[cellId],
     (state: RootState, cellId: string) => state.board.cellNeighborBombs[cellId],
   ],
-  (isGameOver, cell, cellNeighborBombs) => {
+  (revealedBomb, cell, cellNeighborBombs) => {
     const { isFlagged, isBomb, isRevealed } = cell || {};
     return {
-      isFlagged: !isGameOver && isFlagged,
+      isFlagged: !revealedBomb && isFlagged,
       isBomb,
-      isRevealed: isGameOver || isRevealed,
+      isRevealed: revealedBomb || isRevealed,
       neighborBombs: (cellNeighborBombs || []).length,
     };
   },
 );
 
 const initialState: {
-  isGameOver: boolean;
+  revealedBomb: string | null; // Setting this ends the game
   bombCount: number;
   columnCount: number;
   rowCount: number;
@@ -57,7 +57,7 @@ const initialState: {
     undefined | { isRevealed: boolean; isBomb: boolean; isFlagged: boolean }
   >;
 } = {
-  isGameOver: false,
+  revealedBomb: null,
   bombCount: DEFAULT_BOMBS,
   columnCount: DEFAULT_COLUMNS,
   rowCount: DEFAULT_ROWS,
@@ -77,24 +77,24 @@ export const boardSlice = createSlice({
     ) => {
       state.cells = {};
       state.cellNeighborBombs = {};
-      state.isGameOver = false;
+      state.revealedBomb = null;
       if (action.payload) {
         state.bombCount = action.payload.bombs;
         state.rowCount = action.payload.rows;
         state.columnCount = action.payload.columns;
       }
     },
-    finishGame: (state) => {
-      state.isGameOver = true;
+    revealBomb: (state, { payload: cellId }: PayloadAction<string>) => {
+      state.revealedBomb = cellId;
     },
     flag: (state, { payload: { x, y } }: PayloadAction<Cell>): void => {
-      if (state.isGameOver) return;
+      if (state.revealedBomb) return;
       const cellId = `${x}-${y}`;
 
       state.cells[cellId]!.isFlagged = !state.cells[cellId]!.isFlagged;
     },
     reveal: (state, { payload: { x, y } }: PayloadAction<Cell>) => {
-      if (state.isGameOver) return;
+      if (state.revealedBomb) return;
       if (Object.keys(state.cells).length === 0) {
         fillBoard({ x, y });
       }
@@ -111,7 +111,7 @@ export const boardSlice = createSlice({
       for (const cellId of newRevealed) {
         const cell = state.cells[cellId];
         if (cell!.isBomb) {
-          state.isGameOver = true;
+          state.revealedBomb = cellId;
         } else {
           cell!.isRevealed = true;
         }
@@ -206,7 +206,7 @@ export const boardSlice = createSlice({
   },
 });
 
-export const { flag, reveal, startNewGame, finishGame } = boardSlice.actions;
+export const { flag, reveal, startNewGame, revealBomb } = boardSlice.actions;
 
 function isBetween(value: number, begin: number, end: number): boolean {
   return value >= begin && value <= end;

@@ -2,7 +2,7 @@ import { cn, getMouseButtonClicked } from '@/utils';
 import React, { useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks.ts';
 import {
-  finishGame,
+  revealBomb,
   flag,
   reveal,
   selectCellState,
@@ -13,6 +13,7 @@ export function Cell({ row, column }: { row: number; column: number }) {
   const { isFlagged, isBomb, isRevealed, neighborBombs } = useAppSelector(
     (state) => selectCellState(state, cellId),
   );
+  const revealedBomb = useAppSelector((state) => state.board.revealedBomb);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const isTouchOnlyDevice = useMemo(
     () => window.matchMedia('(hover: none)').matches,
@@ -47,7 +48,7 @@ export function Cell({ row, column }: { row: number; column: number }) {
             contentClassName,
           )}
         >
-          💣
+          {cellId === revealedBomb ? '💥' : '💣'}
         </span>
         <span
           className={cn(
@@ -112,7 +113,7 @@ export function Cell({ row, column }: { row: number; column: number }) {
   function onReveal() {
     if (isFlagged) return;
     if (isBomb) {
-      dispatch(finishGame());
+      dispatch(revealBomb(cellId));
     } else {
       dispatch(reveal({ x: row, y: column }));
     }
