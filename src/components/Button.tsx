@@ -12,7 +12,7 @@ export function Button({
   onSuffixClick?: () => void;
 }) {
   return (
-    <div className='flex divide-x-2 divide-contrast-dark rounded-lg border-2 border-contrast dark:border-contrast-dark dark:text-contrast-dark'>
+    <div className='flex divide-x-2 divide-contrast rounded-lg border-2 border-contrast dark:divide-contrast-dark dark:border-contrast-dark dark:text-contrast-dark'>
       <button className='px-4 py-2' onClick={onClick}>
         {children}
       </button>
