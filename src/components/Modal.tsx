@@ -31,7 +31,12 @@ export function Modal({
       <div className='flex -translate-y-[10vh] flex-col gap-6 rounded-lg border-[1px] border-contrast bg-primary-canvas p-4 dark:border-contrast-dark dark:bg-primary-canvas-dark'>
         <div className='flex justify-between'>
           <h1 className='text-2xl dark:text-contrast-dark'>{title}</h1>
-          {onCancel && <XIcon onClick={onCancel} />}
+          {onCancel && (
+            <XIcon
+              onClick={onCancel}
+              className='transition-transform hover:scale-125'
+            />
+          )}
         </div>
         {children}
         {hasActions && (
