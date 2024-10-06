@@ -1,6 +1,6 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '@/redux/store';
-import { range } from '@/utils.ts';
+import { range } from '@/utils';
 
 type Cell = { x: number; y: number };
 

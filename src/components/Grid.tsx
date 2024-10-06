@@ -1,7 +1,7 @@
-import { Cell } from '@/components/Cell.tsx';
+import { Cell } from '@/components/Cell';
 import { cn, range } from '@/utils';
-import { useAppSelector } from '@/redux/hooks.ts';
-import { selectGridCounts } from '@/redux/boardSlice.ts';
+import { useAppSelector } from '@/redux/hooks';
+import { selectGridCounts } from '@/redux/boardSlice';
 
 export const Grid = ({ className }: { className?: string }) => {
   const { rowCount, columnCount } = useAppSelector(selectGridCounts);

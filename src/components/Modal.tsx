@@ -1,7 +1,7 @@
 import React from 'react';
-import { cn } from '@/utils.ts';
-import { Button } from '@/components/Button.tsx';
-import { XIcon } from '@/components/XIcon.tsx';
+import { cn } from '@/utils';
+import { Button } from '@/components/Button';
+import { XIcon } from '@/components/XIcon';
 
 export function Modal({
   open,

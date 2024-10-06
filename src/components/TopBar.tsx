@@ -1,11 +1,11 @@
-import { cn } from '@/utils.ts';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks.ts';
+import { cn } from '@/utils';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import {
   selectFlagCount,
   selectIsGameWon,
   startNewGame,
-} from '@/redux/boardSlice.ts';
-import { Button } from '@/components/Button.tsx';
+} from '@/redux/boardSlice';
+import { Button } from '@/components/Button';
 
 export function TopBar({ onSettingsClick }: { onSettingsClick: () => void }) {
   const isGameWon = useAppSelector(selectIsGameWon);

@@ -1,15 +1,21 @@
-import { useAppSelector } from '@/redux/hooks.ts';
+import { useAppSelector } from '@/redux/hooks';
 import { confetti } from '@tsparticles/confetti';
 import { useEffect, useMemo } from 'react';
-import { selectIsGameWon } from '@/redux/boardSlice.ts';
-import { useIsDarkMode } from '@/hooks/useIsDarkMode.ts';
+import { selectIsGameWon } from '@/redux/boardSlice';
+import { useIsDarkMode } from '@/hooks/useIsDarkMode';
 
 export function Confetti() {
   const isGameWon = useAppSelector(selectIsGameWon);
   const isDarkMode = useIsDarkMode();
-  const colors = useMemo(
-    // TODO: Get some real colors here
-    () => (isDarkMode ? ['#257f00', '#aa9d00'] : ['#0000ff', '#ff0000']),
+  const props = useMemo(
+    (): Parameters<typeof confetti>[0] => ({
+      count: 2,
+      spread: 30,
+      shapes: ['circle'],
+      colors: isDarkMode
+        ? ['#007330', '#cc9e00', '#231b61', '#d8d8d8']
+        : ['#009b3a', '#ffdf00', '#002776', '#ffffff'], // 🇧🇷
+    }),
     [isDarkMode],
   );
 
@@ -24,33 +30,24 @@ export function Confetti() {
 
     function frame() {
       Promise.all([
-        confetti({
-          particleCount: 2,
-          angle: 60,
-          spread: 55,
-          origin: { x: 0, y: 1 },
-          colors,
-        }),
-        confetti({
-          particleCount: 2,
-          angle: 120,
-          spread: 55,
-          origin: { x: 1, y: 1 },
-          colors,
-        }),
-        confetti({
-          particleCount: 2,
-          angle: 90,
-          spread: 55,
-          origin: { x: 0.5, y: 1 },
-          colors,
-        }),
+        // Bottom-left
+        confetti(
+          Object.assign({ angle: 60, position: { x: 0, y: 100 } }, props),
+        ),
+        // Bottom-middle
+        confetti(
+          Object.assign({ angle: 90, position: { x: 50, y: 100 } }, props),
+        ),
+        // Bottom-right
+        confetti(
+          Object.assign({ angle: 120, position: { x: 100, y: 100 } }, props),
+        ),
       ]).then(() => {
         if (!showConfetti) return;
         requestAnimationFrame(frame);
       });
     }
-  }, [isGameWon, colors]);
+  }, [isGameWon, props]);
 
   return null;
 }

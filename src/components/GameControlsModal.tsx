@@ -1,12 +1,12 @@
-import { useAppDispatch } from '@/redux/hooks.ts';
+import { useAppDispatch } from '@/redux/hooks';
 import {
   DEFAULT_BOMBS,
   DEFAULT_COLUMNS,
   DEFAULT_ROWS,
   startNewGame,
-} from '@/redux/boardSlice.ts';
+} from '@/redux/boardSlice';
 import { useState } from 'react';
-import { Modal } from '@/components/Modal.tsx';
+import { Modal } from '@/components/Modal';
 
 export function GameControlsModal({
   open,

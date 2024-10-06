@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useForceRerender } from '@/utils.ts';
+import { useForceRerender } from '@/utils';
 
 let subscribers: (() => void)[] = [];
 let observer: MutationObserver | null = null;

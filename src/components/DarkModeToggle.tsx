@@ -1,5 +1,5 @@
-import { cn } from '@/utils.ts';
-import { useIsDarkMode } from '@/hooks/useIsDarkMode.ts';
+import { cn } from '@/utils';
+import { useIsDarkMode } from '@/hooks/useIsDarkMode';
 
 export function DarkModeToggle({ className }: { className?: string }) {
   const isDark = useIsDarkMode();

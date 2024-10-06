@@ -1,12 +1,12 @@
 import { cn, getMouseButtonClicked, useIsTouchOnly } from '@/utils';
 import React, { useState } from 'react';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks.ts';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import {
   flag,
   reveal,
   selectCellState,
   selectIsGameWon,
-} from '@/redux/boardSlice.ts';
+} from '@/redux/boardSlice';
 
 export function Cell({
   cellId,
