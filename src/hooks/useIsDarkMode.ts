@@ -27,5 +27,9 @@ export function useIsDarkMode(): boolean {
     };
   }, [forceRerender]);
 
+  return isDarkMode();
+}
+
+export function isDarkMode(): boolean {
   return element.classList.contains('dark');
 }
