@@ -103,7 +103,9 @@ export const boardSlice = createSlice({
     reveal: (state, { payload: cellId }: PayloadAction<string>) => {
       if (state.revealedBomb || selectIsGameWon({ board: state })) return;
       const [x, y] = cellId.split('-').map(Number);
-      if (Object.keys(state.cells).length === 0) {
+      const isFirstReveal = Object.keys(state.cells).length === 0;
+
+      if (isFirstReveal) {
         fillBoard({ x, y });
       }
 
@@ -112,6 +114,10 @@ export const boardSlice = createSlice({
       if (cell.isFlagged) return;
       if (cell.isBomb) {
         state.revealedBomb = cellId;
+        return;
+      }
+      if (!isFirstReveal && !cell.isRevealed) {
+        cell!.isRevealed = true;
         return;
       }
 
