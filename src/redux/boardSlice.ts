@@ -116,8 +116,10 @@ export const boardSlice = createSlice({
         state.revealedBomb = cellId;
         return;
       }
-      if (!isFirstReveal && !cell.isRevealed) {
-        cell!.isRevealed = true;
+
+      const neighborBombs = state.cellNeighborBombs[cellId]?.length || 0;
+      if (!isFirstReveal && !cell.isRevealed && neighborBombs > 0) {
+        cell.isRevealed = true;
         return;
       }
 
@@ -127,11 +129,11 @@ export const boardSlice = createSlice({
       ].filter((cellId) => !state.cells[cellId]?.isFlagged);
 
       for (const cellId of newRevealed) {
-        const cell = state.cells[cellId];
-        if (cell!.isBomb) {
+        const cell = state.cells[cellId]!;
+        if (cell.isBomb) {
           state.revealedBomb = cellId;
         } else {
-          cell!.isRevealed = true;
+          cell.isRevealed = true;
         }
       }
 
