@@ -4,9 +4,12 @@ import { range } from '@/utils';
 
 type Cell = { x: number; y: number };
 
-export const DEFAULT_BOMBS = 20;
-export const DEFAULT_COLUMNS = 10;
-export const DEFAULT_ROWS = 10;
+export const DIFFICULTIES = {
+  beginner: { bombs: 10, columns: 10, rows: 10 },
+  easy: { bombs: 20, columns: 10, rows: 10 },
+  medium: { bombs: 40, columns: 16, rows: 16 },
+  hard: { bombs: 100, columns: 20, rows: 20 },
+};
 
 export const selectGridCounts = createSelector(
   [
@@ -67,9 +70,9 @@ const initialState: {
   >;
 } = {
   revealedBomb: null,
-  bombCount: DEFAULT_BOMBS,
-  columnCount: DEFAULT_COLUMNS,
-  rowCount: DEFAULT_ROWS,
+  bombCount: DIFFICULTIES.easy.bombs,
+  columnCount: DIFFICULTIES.easy.columns,
+  rowCount: DIFFICULTIES.easy.rows,
   cellNeighborBombs: {},
   cells: {},
 };
