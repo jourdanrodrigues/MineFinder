@@ -27,7 +27,7 @@ export function SettingsModal({
       onCancel={onClose}
     >
       <select
-        className='w-full rounded-lg border border-contrast bg-transparent px-2 dark:border-contrast-dark dark:text-contrast-dark'
+        className='w-full appearance-none rounded-lg border border-contrast bg-transparent px-2 dark:border-contrast-dark dark:text-contrast-dark'
         onChange={(e) => setDifficulty(e.target.value as Difficulty)}
         value={difficulty}
       >
