@@ -8,7 +8,7 @@ import {
 import { useState } from 'react';
 import { Modal } from '@/components/Modal';
 
-export function GameControlsModal({
+export function SettingsModal({
   open,
   onClose,
 }: {

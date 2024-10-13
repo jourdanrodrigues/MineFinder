@@ -17,7 +17,7 @@ export function TopBar({ onSettingsClick }: { onSettingsClick: () => void }) {
   return (
     <div
       className={cn(
-        'fixed left-0 right-0 top-0 flex h-16 items-center justify-between border-b border-contrast bg-primary-canvas px-6 dark:border-contrast-dark dark:bg-primary-canvas-dark',
+        'w-full flex h-16 items-center justify-between border-b border-contrast bg-primary-canvas px-6 dark:border-contrast-dark dark:bg-primary-canvas-dark',
       )}
     >
       <div className='flex justify-center gap-2'>

@@ -9,7 +9,7 @@ export const Grid = ({ className }: { className?: string }) => {
   return (
     <div
       className={cn(
-        'grid max-h-full max-w-full select-none overflow-auto overscroll-none border-b border-r border-contrast dark:border-contrast-dark',
+        'grid select-none border-b border-r border-contrast dark:border-contrast-dark',
         className,
       )}
       style={{
