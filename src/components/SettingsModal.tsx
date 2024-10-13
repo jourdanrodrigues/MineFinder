@@ -2,8 +2,14 @@ import { useAppDispatch } from '@/redux/hooks';
 import { DIFFICULTIES, startNewGame } from '@/redux/boardSlice';
 import { useState } from 'react';
 import { Modal } from '@/components/Modal';
+import { Select } from '@/components/Select';
 
 type Difficulty = keyof typeof DIFFICULTIES;
+
+const DIFFICULTY_OPTIONS = Object.keys(DIFFICULTIES).map((option) => ({
+  value: option as Difficulty,
+  label: option.charAt(0).toUpperCase() + option.slice(1),
+}));
 
 export function SettingsModal({
   open,
@@ -26,17 +32,12 @@ export function SettingsModal({
       }}
       onCancel={onClose}
     >
-      <select
-        className='w-full appearance-none rounded-lg border border-contrast bg-transparent px-2 dark:border-contrast-dark dark:text-contrast-dark'
-        onChange={(e) => setDifficulty(e.target.value as Difficulty)}
+      <Select
+        className='w-full'
+        onChange={setDifficulty}
+        options={DIFFICULTY_OPTIONS}
         value={difficulty}
-      >
-        {Object.keys(DIFFICULTIES).map((key) => (
-          <option key={key} value={key}>
-            {key.charAt(0).toUpperCase() + key.slice(1)}
-          </option>
-        ))}
-      </select>
+      />
     </Modal>
   );
 }

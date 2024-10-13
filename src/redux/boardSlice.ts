@@ -14,7 +14,7 @@ export const DIFFICULTIES = {
   easy: { bombs: 20, columns: 10, rows: 10 },
   medium: { bombs: 40, columns: 16, rows: 16 },
   hard: { bombs: 100, columns: 20, rows: 20 },
-};
+} as const;
 
 export const selectGridCounts = createSelector(
   [

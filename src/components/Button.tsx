@@ -1,4 +1,5 @@
 import React from 'react';
+import { buttonClassName } from '@/classNames';
 
 export function Button({
   children,
@@ -8,10 +9,7 @@ export function Button({
   onClick?: () => void;
 }) {
   return (
-    <button
-      className='rounded-lg border-[1px] border-contrast px-4 py-2 dark:border-contrast-dark dark:text-contrast-dark'
-      onClick={onClick}
-    >
+    <button className={buttonClassName} onClick={onClick}>
       {children}
     </button>
   );
