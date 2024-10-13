@@ -53,10 +53,13 @@ export const selectIsGameWon = createSelector(
     (state: Pick<RootState, 'board'>) => state.board.revealedBomb,
     (state: Pick<RootState, 'board'>) => state.board.cells,
   ],
-  (revealedBomb, cells) => {
+  (revealedBomb, cellsMap) => {
     if (revealedBomb) return false;
-    const nonBombs = Object.values(cells).filter((cell) => !cell?.isBomb);
-    return nonBombs.length > 0 && nonBombs.every((cell) => cell?.isRevealed);
+    const cells = Object.values(cellsMap);
+    return (
+      cells.length > 0 &&
+      cells.every((cell) => cell?.isBomb || cell?.isRevealed)
+    );
   },
 );
 
